@@ -1,29 +1,99 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Cadastro Simples</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
-        form { border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 300px; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
-        button { margin-top: 20px; width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
-    </style>
+<meta charset="UTF-8">
+<title>Cadastro</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.box {
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+}
+
+input, select, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  background: #00c853;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00a844;
+}
+
+#msg {
+  margin-top: 10px;
+  text-align: center;
+}
+</style>
+
 </head>
 <body>
 
-    <form name="contatos" method="POST" data-netlify="true">
-        <h2>Novo Contato</h2>
-        
-        <label>Nome:</label>
-        <input type="text" name="nome" required>
+<div class="box">
+  <h2>Cadastro</h2>
 
-        <label>Telefone:</label>
-        <input type="text" name="telefone" required>
+  <form id="form">
+    <input name="nome" placeholder="Nome" required>
+    <input name="cpf" placeholder="CPF">
+    <input name="telefone" placeholder="Telefone">
 
-        <button type="submit">Enviar Cadastro</button>
-    </form>
+    <select name="sexo">
+      <option value="">Sexo</option>
+      <option>Masculino</option>
+      <option>Feminino</option>
+    </select>
+
+    <input name="endereco" placeholder="Endereço">
+    <input name="cidade" placeholder="Cidade">
+    <input name="cep" placeholder="CEP">
+
+    <button type="submit">Salvar</button>
+  </form>
+
+  <p id="msg"></p>
+</div>
+
+<script>
+const form = document.getElementById('form');
+
+form.addEventListener('submit', function(e){
+  e.preventDefault();
+
+  const data = Object.fromEntries(new FormData(form));
+
+  fetch("https://script.google.com/macros/s/AKfycbyFKfoxthWjIqkd_VkEJsZZTRndhIjZeqHjjQXBdGg8jTh0NVAOwtluJhcMvLx6HyuP/exec", {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(() => {
+    document.getElementById('msg').innerText = "✔ Salvo com sucesso!";
+    form.reset();
+  })
+  .catch(() => {
+    document.getElementById('msg').innerText = "❌ Erro ao salvar";
+  });
+});
+</script>
 
 </body>
 </html>

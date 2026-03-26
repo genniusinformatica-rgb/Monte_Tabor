@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Painel</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+  padding: 20px;
+}
+
+/* LOGIN */
+#loginBox {
+  max-width: 300px;
+  margin: auto;
+  margin-top: 100px;
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* PAINEL */
+#painel {
+  display: none;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+}
+
+button {
+  background: #00c853;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #00a844;
+}
+
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #444;
+  padding: 8px;
+}
+
+th {
+  background: #222;
+}
+</style>
+
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>Login</h2>
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <p id="erro"></p>
+</div>
+
+<!-- PAINEL -->
+<div id="painel">
+  <h2>Painel de Cadastros</h2>
+
+  <div class="topo">
+    <input type="text" id="busca" placeholder="Busca geral...">
+
+    <select id="sexo">
+      <option value="">Todos os sexos</option>
+    </select>
+
+    <select id="cidade">
+      <option value="">Todas cidades</option>
+    </select>
+
+    <button onclick="limparFiltros()">🧹 Limpar</button>
+    <button onclick="atualizar()">🔄 Atualizar</button>
+    <button onclick="imprimir()">🖨 Relatório</button>
+  </div>
+
+  <table id="tabela"></table>
+</div>
+
+<script>
+const SENHA = "123";
+
+const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR30UaJes9BEyJ_qB3cg5hmysSrieweS2OafckPb9vePTtfpI0bN7D89gTBvRFsNm2FwKjGZ2bhHFP2/pub?output=tsv";
+
+let dados = [];
+
+// LOGIN
+function login() {
+  if (document.getElementById("senha").value === SENHA) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("painel").style.display = "block";
+    carregar();
+  } else {
+    document.getElementById("erro").innerText = "Senha incorreta";
+  }
+}
+
+// CARREGAR DADOS
+function carregar() {
+  fetch(URL)
+    .then(res => res.text())
+    .then(texto => {
+      const linhas = texto.trim().split("\n");
+      dados = linhas.map(l => l.split("\t"));
+
+      popularCombos();
+      aplicarFiltro();
+    });
+}
+
+// ATUALIZAR (RECARREGA DO GOOGLE)
+function atualizar() {
+  carregar();
+}
+
+// LIMPAR FILTROS
+function limparFiltros() {
+  document.getElementById("busca").value = "";
+  document.getElementById("sexo").value = "";
+  document.getElementById("cidade").value = "";
+  aplicarFiltro();
+}
+
+// POPULAR COMBOS
+function popularCombos() {
+  let sexos = new Set();
+  let cidades = new Set();
+
+  dados.slice(1).forEach(linha => {
+    sexos.add(linha[3]);
+    cidades.add(linha[5]);
+  });
+
+  const selectSexo = document.getElementById("sexo");
+  const selectCidade = document.getElementById("cidade");
+
+  selectSexo.innerHTML = '<option value="">Todos os sexos</option>';
+  selectCidade.innerHTML = '<option value="">Todas cidades</option>';
+
+  sexos.forEach(s => {
+    if (s) selectSexo.innerHTML += `<option>${s}</option>`;
+  });
+
+  cidades.forEach(c => {
+    if (c) selectCidade.innerHTML += `<option>${c}</option>`;
+  });
+}
+
+// MOSTRAR
+function mostrar(lista) {
+  let html = "<tr>";
+  lista[0].forEach(col => html += `<th>${col}</th>`);
+  html += "</tr>";
+
+  for (let i = 1; i < lista.length; i++) {
+    html += "<tr>";
+    lista[i].forEach(c => html += `<td>${c}</td>`);
+    html += "</tr>";
+  }
+
+  document.getElementById("tabela").innerHTML = html;
+}
+
+// FILTRO AUTOMÁTICO
+function aplicarFiltro() {
+  const busca = document.getElementById("busca").value.toLowerCase();
+  const sexo = document.getElementById("sexo").value;
+  const cidade = document.getElementById("cidade").value;
+
+  let filtrado = dados.filter((linha, i) => {
+    if (i === 0) return true;
+
+    let textoLinha = linha.join(" ").toLowerCase();
+
+    return (
+      textoLinha.includes(busca) &&
+      (sexo === "" || linha[3] === sexo) &&
+      (cidade === "" || linha[5] === cidade)
+    );
+  });
+
+  mostrar(filtrado);
+}
+
+// EVENTOS AUTOMÁTICOS
+document.addEventListener("input", aplicarFiltro);
+document.addEventListener("change", aplicarFiltro);
+
+// RELATÓRIO
+function imprimir() {
+  let conteudo = document.getElementById("tabela").innerHTML;
+  let dataAtual = new Date().toLocaleDateString();
+
+  let win = window.open('', '', 'width=900,height=700');
+
+  win.document.write(`
+    <html>
+    <head>
+      <title>Relatório</title>
+      <style>
+        body { font-family: Arial; padding: 30px; }
+        h1 { text-align: center; }
+        .data { text-align: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #333; color: #fff; padding: 10px; }
+        td { border: 1px solid #ccc; padding: 8px; }
+        tr:nth-child(even) { background: #f2f2f2; }
+      </style>
+    </head>
+    <body>
+      <h1>Relatório de Cadastros</h1>
+      <div class="data">Gerado em: ${dataAtual}</div>
+      <table>${conteudo}</table>
+    </body>
+    </html>
+  `);
+
+  win.document.close();
+  win.print();
+}
+</script>
+
+</body>
+</html>
