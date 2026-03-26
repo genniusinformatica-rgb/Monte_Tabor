@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro Simples</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
+        form { border: 1px solid #ccc; padding: 20px; border-radius: 8px; width: 300px; }
+        label { display: block; margin-top: 10px; }
+        input { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { margin-top: 20px; width: 100%; padding: 10px; background: #28a745; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <form name="contatos" method="POST" data-netlify="true">
+        <h2>Novo Contato</h2>
+        
+        <label>Nome:</label>
+        <input type="text" name="nome" required>
+
+        <label>Telefone:</label>
+        <input type="text" name="telefone" required>
+
+        <button type="submit">Enviar Cadastro</button>
+    </form>
+
+</body>
+</html>
