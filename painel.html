@@ -1,240 +1,353 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Painel Administrativo - Acampamento de Servos</title>
-    <style>
-        :root {
-            --primary: #facc15;
-            --bg-dark: #0f172a;
-            --card-bg: #1e2937;
-            --text-main: #e2e8f0;
-            --border: #334155;
-        }
+<meta charset="UTF-8">
+<title>Painel Administrativo - Acampamento de Servos</title>
 
-        /* Configuração de Login */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark); display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 2000;
-        }
-        #conteudo-principal { display: none; }
+<style>
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
+        color: #e2e8f0;
+        line-height: 1.6;
+        padding: 20px;
+    }
 
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg-dark); color: var(--text-main);
-            margin: 0; padding: 20px;
-        }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
 
-        .topo {
-            background: var(--card-bg); padding: 20px; border-radius: 15px;
-            display: flex; flex-wrap: wrap; gap: 10px;
-            margin-bottom: 20px; justify-content: center;
-            border: 1px solid var(--border);
-        }
+    .header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        input, select {
-            padding: 10px; border-radius: 8px; border: 1px solid var(--border);
-            background: #0f172a; color: white;
-        }
+    .header h1 {
+        color: #facc15;
+        font-size: 2.2rem;
+        text-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+    }
 
-        button {
-            padding: 10px 20px; border-radius: 8px; border: none;
-            cursor: pointer; font-weight: bold; transition: 0.3s;
-        }
-        .btn-limpar { background: #475569; color: white; }
-        .btn-atualizar { background: #10b981; color: white; }
-        .btn-relatorio { background: var(--primary); color: #0f172a; }
-        .btn-ficha-massa { background: #6366f1; color: white; }
-        .btn-ficha { background: #6366f1; color: white; padding: 5px 10px; font-size: 0.7rem; }
+    /* Estilo do Login */
+    #login-screen {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: #0f172a;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
 
-        /* Tabela Visual */
-        .tabela-container { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { background: #111827; color: var(--primary); padding: 12px; text-align: left; position: sticky; top: 0; }
-        td { padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    #conteudo-principal { display: none; }
 
-        /* CORREÇÃO DA IMPRESSÃO DO RELATÓRIO (SEM CORTAR) */
-        @media print {
-            @page { size: landscape; margin: 1cm; }
-            body { background: white !important; color: black !important; padding: 0; }
-            .topo, #login-screen, .btn-ficha, h1 { display: none !important; }
-            .tabela-container { overflow: visible !important; }
-            table { width: 100% !important; border: 1px solid #000; font-size: 8pt; table-layout: auto; }
-            th, td { 
-                border: 1px solid #000 !important; 
-                white-space: normal !important; /* Quebra o texto para não cortar a folha */
-                color: black !important; padding: 4px !important;
-            }
-            th { background: #eee !important; }
-            .no-print { display: none !important; }
+    .topo-acoes {
+        background: #1e2937;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        border: 1px solid #334155;
+        justify-content: center;
+    }
+
+    input, select {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        background: #0f172a;
+        color: white;
+    }
+
+    button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .btn-atualizar { background: #10b981; color: white; }
+    .btn-imprimir { background: #facc15; color: #1e2937; }
+    .btn-fichas { background: #6366f1; color: white; }
+    .btn-tabela-ficha { background: #6366f1; color: white; font-size: 10px; padding: 5px 10px; }
+
+    /* Tabela */
+    .box-tabela {
+        background: #1e2937;
+        border-radius: 15px;
+        overflow-x: auto;
+        border: 1px solid #334155;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    th {
+        background: #0f172a;
+        color: #facc15;
+        padding: 12px;
+        text-align: left;
+        text-transform: uppercase;
+        border-bottom: 2px solid #334155;
+    }
+
+    td {
+        padding: 10px;
+        border-bottom: 1px solid #334155;
+        white-space: nowrap;
+    }
+
+    tr:hover { background: #2d3a4d; }
+
+    /* CONFIGURAÇÃO DE IMPRESSÃO DO RELATÓRIO */
+    @media print {
+        @page { size: landscape; margin: 0.5cm; }
+        body { background: white !important; color: black !important; padding: 0; }
+        #login-screen, .topo-acoes, .header, .btn-tabela-ficha { display: none !important; }
+        .box-tabela { overflow: visible !important; border: none; }
+        table { width: 100% !important; border: 1px solid #000; font-size: 8pt; table-layout: auto; }
+        th, td { 
+            border: 1px solid #000 !important; 
+            white-space: normal !important; 
+            word-wrap: break-word;
+            color: black !important;
+            padding: 3px !important;
         }
-    </style>
+        th { background: #eee !important; }
+    }
+</style>
 </head>
+
 <body>
 
 <div id="login-screen">
-    <h1>Acesso Restrito</h1>
-    <input type="password" id="senhaInput" placeholder="Senha...">
-    <button class="btn-relatorio" onclick="verificarSenha()" style="margin-top:10px">Entrar</button>
+    <h1 style="color:#facc15">Acesso Restrito</h1>
+    <input type="password" id="senha" placeholder="Digite a senha...">
+    <button class="btn-imprimir" onclick="logar()" style="margin-top:15px">Entrar</button>
 </div>
 
-<div id="conteudo-principal">
-    <h1 style="text-align:center; color:var(--primary)">📋 Gestão de Inscrições</h1>
-
-    <div class="topo">
-        <input type="text" id="busca" placeholder="🔍 Buscar...">
-        <select id="filtroSexo" onchange="aplicarFiltro()"><option value="">Sexo</option></select>
-        <button class="btn-limpar" onclick="limparFiltros()">Limpar</button>
-        <button class="btn-atualizar" onclick="carregarDados()">Atualizar</button>
-        <button class="btn-relatorio" onclick="window.print()">Imprimir Relatório</button>
-        <button class="btn-ficha-massa" onclick="imprimirFichasFiltradas()">Imprimir Fichas (Filtro)</button>
+<div id="conteudo-principal" class="container">
+    <div class="header">
+        <h1>Relatório de Inscrições - 1º Acampamento</h1>
     </div>
 
-    <div class="tabela-container">
-        <table id="tabela"></table>
+    <div class="topo-acoes">
+        <input type="text" id="filtroNome" placeholder="Buscar por nome..." oninput="filtrar()">
+        <select id="filtroSexo" onchange="filtrar()">
+            <option value="">Todos os Sexos</option>
+            <option value="MASCULINO">Masculino</option>
+            <option value="FEMININO">Feminino</option>
+        </select>
+        <button class="btn-atualizar" onclick="buscarDados()">🔄 Atualizar Dados</button>
+        <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Relatório</button>
+        <button class="btn-fichas" onclick="imprimirFichasEmMassa()">📄 Imprimir Fichas (Filtro)</button>
+    </div>
+
+    <div class="box-tabela">
+        <table id="tabelaDados">
+            <thead><tr id="cabecalho"></tr></thead>
+            <tbody id="corpoTabela"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
-const URL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
-let todosDados = [];
-let dadosFiltradosAtuais = [];
-let headers = [];
+const scriptURL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
+let dadosGlobais = [];
+let cabecalhoGlobal = [];
 
-function verificarSenha() {
-    if (document.getElementById("senhaInput").value === "123") {
+function logar() {
+    const senha = document.getElementById("senha").value;
+    if(senha === "123") {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("conteudo-principal").style.display = "block";
-        carregarDados();
-    } else { alert("Senha incorreta!"); }
-}
-
-function formatarData(texto) {
-    if (!texto) return "";
-    const str = String(texto);
-    if (str.includes("GMT") || (str.length > 20 && str.includes(" "))) {
-        const d = new Date(str);
-        if (!isNaN(d)) return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+        buscarDados();
+    } else {
+        alert("Senha incorreta!");
     }
-    return str;
 }
 
-function carregarDados() {
-    fetch(URL).then(res => res.text()).then(texto => {
-        const linhas = texto.trim().split("\n");
-        todosDados = linhas.map(l => l.split("\t"));
-        headers = todosDados[0];
-        dadosFiltradosAtuais = [...todosDados];
-        popularFiltros();
-        mostrarTabela(todosDados);
+// FUNÇÃO PARA CORRIGIR FORMATO DE DATA dd/mm/aaaa
+function formatarDataBrasileira(valor) {
+    if (!valor) return "";
+    let str = String(valor);
+    if (str.includes("GMT") || (str.length > 20 && str.includes(" "))) {
+        let d = new Date(str);
+        if (!isNaN(d)) {
+            let dia = String(d.getDate()).padStart(2, '0');
+            let mes = String(d.getMonth() + 1).padStart(2, '0');
+            let ano = d.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+    }
+    return valor;
+}
+
+function buscarDados() {
+    fetch(scriptURL)
+    .then(res => res.text())
+    .then(data => {
+        const linhas = data.trim().split("\n");
+        dadosGlobais = linhas.map(linha => linha.split("\t"));
+        cabecalhoGlobal = dadosGlobais[0];
+        renderizarTabela(dadosGlobais);
     });
 }
 
-function popularFiltros() {
-    const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
-    const sexos = new Set();
-    for (let i = 1; i < todosDados.length; i++) if(todosDados[i][idxSexo]) sexos.add(todosDados[i][idxSexo].trim());
-    const sel = document.getElementById("filtroSexo");
-    sel.innerHTML = '<option value="">Todos os Sexos</option>';
-    sexos.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
-}
-
-function mostrarTabela(dados) {
-    let html = "<thead><tr><th class='no-print'>FICHA</th>";
-    headers.forEach(h => html += `<th>${h.toUpperCase()}</th>`);
-    html += "</tr></thead><tbody>";
-
-    for (let i = 1; i < dados.length; i++) {
-        if (dados[i] === headers) continue;
-        html += `<tr><td class='no-print'><button class="btn-ficha" onclick="gerarFichaIndividual(${i})">ABRIR</button></td>`;
-        dados[i].forEach(cel => html += `<td>${formatarData(cel)}</td>`);
-        html += "</tr>";
-    }
-    document.getElementById("tabela").innerHTML = html + "</tbody>";
-}
-
-function aplicarFiltro() {
-    const busca = document.getElementById("busca").value.toLowerCase();
-    const sexo = document.getElementById("filtroSexo").value;
-    const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
+function renderizarTabela(dados) {
+    const cabecalhoTr = document.getElementById("cabecalho");
+    const corpoTabela = document.getElementById("corpoTabela");
     
-    dadosFiltradosAtuais = [headers];
-    for (let i = 1; i < todosDados.length; i++) {
-        const bateBusca = todosDados[i].join(" ").toLowerCase().includes(busca);
-        const bateSexo = !sexo || todosDados[i][idxSexo] === sexo;
-        if (bateBusca && bateSexo) dadosFiltradosAtuais.push(todosDados[i]);
+    cabecalhoTr.innerHTML = "<th>FICHA</th>";
+    cabecalhoGlobal.forEach(h => cabecalhoTr.innerHTML += `<th>${h}</th>`);
+
+    corpoTabela.innerHTML = "";
+    for(let i = 1; i < dados.length; i++) {
+        let tr = document.createElement("tr");
+        
+        // Botão Individual
+        let tdBtn = document.createElement("td");
+        tdBtn.innerHTML = `<button class="btn-tabela-ficha" onclick="gerarFichaIndividual(${i})">ABRIR</button>`;
+        tr.appendChild(tdBtn);
+
+        dados[i].forEach(celula => {
+            let td = document.createElement("td");
+            td.textContent = formatarDataBrasileira(celula);
+            tr.appendChild(td);
+        });
+        corpoTabela.appendChild(tr);
     }
-    mostrarTabela(dadosFiltradosAtuais);
 }
 
-function limparFiltros() {
-    document.getElementById("busca").value = "";
-    document.getElementById("filtroSexo").value = "";
-    dadosFiltradosAtuais = [...todosDados];
-    mostrarTabela(todosDados);
+function filtrar() {
+    const nomeBusca = document.getElementById("filtroNome").value.toLowerCase();
+    const sexoBusca = document.getElementById("filtroSexo").value;
+    
+    const idxNome = cabecalhoGlobal.findIndex(h => h.toLowerCase() === "nome");
+    const idxSexo = cabecalhoGlobal.findIndex(h => h.toLowerCase() === "sexo");
+
+    const filtrados = [cabecalhoGlobal];
+    for(let i = 1; i < dadosGlobais.length; i++) {
+        const linha = dadosGlobais[i];
+        const bateNome = linha[idxNome].toLowerCase().includes(nomeBusca);
+        const bateSexo = !sexoBusca || linha[idxSexo] === sexoBusca;
+        
+        if(bateNome && bateSexo) filtrados.push(linha);
+    }
+    renderizarTabela(filtrados);
 }
 
-// FUNÇÃO PARA CRIAR O CONTEÚDO DA FICHA (REUTILIZÁVEL)
-function montarLayoutFicha(linhaDados) {
-    let ficha = `
-        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 2px solid #000; margin-bottom: 20px; position: relative; min-height: 95vh;">
+// FUNÇÃO PARA CRIAR O HTML DA FICHA (COM TODOS OS CAMPOS DE SAÚDE)
+function prepararHtmlFicha(index) {
+    const registro = dadosGlobais[index];
+    let html = `
+        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 4px double #000; min-height: 95vh; box-sizing: border-box; margin-bottom: 20px;">
             <div style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px;">
-                <h2 style="margin: 5px 0;">1º ACAMPAMENTO DE SERVOS</h2>
-                <h4 style="margin: 5px 0; color: #444;">FICHA OFICIAL DE INSCRIÇÃO</h4>
+                <h2 style="margin: 0;">1º ACAMPAMENTO DE SERVOS</h2>
+                <h3 style="margin: 5px 0; background: #eee; padding: 5px;">FICHA INDIVIDUAL DE INSCRIÇÃO</h3>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
     `;
-    
-    headers.forEach((h, i) => {
-        ficha += `
-            <div style="border-bottom: 1px solid #ccc; padding: 4px;">
-                <small style="font-weight: bold; text-transform: uppercase; color: #666; font-size: 9px;">${h}</small><br>
-                <span style="font-size: 13px;">${formatarData(linhaDados[i]) || '---'}</span>
+
+    cabecalhoGlobal.forEach((header, i) => {
+        html += `
+            <div style="border-bottom: 1px solid #ccc; padding: 5px;">
+                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #444;">${header}</div>
+                <div style="font-size: 14px;">${formatarDataBrasileira(registro[i]) || '---'}</div>
             </div>
         `;
     });
 
-    ficha += `
+    html += `
             </div>
-            <div style="margin-top: 30px; border: 1px solid #000; padding: 10px; font-size: 11px;">
-                <strong>TERMO:</strong> Declaro que as informações acima são verdadeiras e me comprometo a seguir as normas do acampamento.
+            <div style="margin-top: 40px; border: 1px solid #000; padding: 15px; font-size: 12px; line-height: 1.4;">
+                <strong>DECLARAÇÃO:</strong> Declaro que todas as informações acima, especialmente as de saúde, são verdadeiras. Autorizo o uso de minha imagem para fins de divulgação do evento e concordo com as normas estabelecidas pela organização.
             </div>
-            <div style="margin-top: 40px; text-align: center;">
-                <p>___________________________________________________</p>
-                <small>Assinatura do Campista / Responsável</small>
+            <div style="margin-top: 60px; text-align: center; display: flex; justify-content: space-around;">
+                <div>
+                    <p>_____________________________________</p>
+                    <p style="font-size: 12px;">Assinatura do Campista/Responsável</p>
+                </div>
+                <div>
+                    <p>Data: ____/____/2026</p>
+                </div>
             </div>
         </div>
     `;
-    return ficha;
+    return html;
 }
 
-// IMPRIMIR APENAS UMA
 function gerarFichaIndividual(index) {
     const win = window.open('', '', 'width=900,height=1000');
     win.document.write('<html><head><title>Ficha</title></head><body>');
-    win.document.write(montarLayoutFicha(todosDados[index]));
+    win.document.write(prepararHtmlFicha(index));
     win.document.write('</body></html>');
     win.document.close();
     setTimeout(() => { win.print(); }, 500);
 }
 
-// IMPRIMIR TODAS DO FILTRO (UMA POR FOLHA)
-function imprimirFichasFiltradas() {
+function imprimirFichasEmMassa() {
     const win = window.open('', '', 'width=900,height=1000');
     win.document.write('<html><head><title>Fichas em Massa</title></head><body>');
     
-    for (let i = 1; i < dadosFiltradosAtuais.length; i++) {
-        if (dadosFiltradosAtuais[i] === headers) continue;
-        win.document.write(montarLayoutFicha(dadosFiltradosAtuais[i]));
-    }
+    // Pega as linhas que estão atualmente visíveis na tabela (após filtro)
+    const linhasVisiveis = document.querySelectorAll("#corpoTabela tr");
     
+    linhasVisiveis.forEach(tr => {
+        // O index real do dado está no array global, precisamos achar pelo nome ou ID
+        // Para simplificar, vamos reconstruir a ficha com base nos TDs da linha
+        let dadosDaLinha = [];
+        tr.querySelectorAll("td").forEach((td, idx) => {
+            if(idx > 0) dadosDaLinha.push(td.textContent);
+        });
+        
+        // Usamos uma versão adaptada da função preparar para massa
+        win.document.write(prepararHtmlFichaMassa(dadosDaLinha));
+    });
+
     win.document.write('</body></html>');
     win.document.close();
     setTimeout(() => { win.print(); }, 800);
 }
 
-document.getElementById("busca").addEventListener("input", aplicarFiltro);
+function prepararHtmlFichaMassa(dadosLinha) {
+    let html = `
+        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 4px double #000; min-height: 95vh; box-sizing: border-box; margin-bottom: 20px;">
+            <div style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px;">
+                <h2 style="margin: 0;">1º ACAMPAMENTO DE SERVOS</h2>
+                <h3 style="margin: 5px 0; background: #eee; padding: 5px;">FICHA DE INSCRIÇÃO</h3>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+    `;
+    cabecalhoGlobal.forEach((header, i) => {
+        html += `
+            <div style="border-bottom: 1px solid #ccc; padding: 5px;">
+                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase;">${header}</div>
+                <div style="font-size: 13px;">${dadosLinha[i] || '---'}</div>
+            </div>
+        `;
+    });
+    html += `</div>
+            <div style="margin-top: 50px; text-align: center;">
+                <p>_____________________________________</p>
+                <p>Assinatura</p>
+            </div>
+        </div>`;
+    return html;
+}
 </script>
+
 </body>
 </html>
