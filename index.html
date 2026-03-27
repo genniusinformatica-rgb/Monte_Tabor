@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Painel Administrativo - Acampamento de Servos</title>
+<title>Inscrição - 1º Acampamento de Servos</title>
 
 <style>
     body {
@@ -11,328 +11,381 @@
         background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
         color: #e2e8f0;
         line-height: 1.6;
-        padding: 20px;
     }
 
     .container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 980px;
+        margin: 40px auto;
+        padding: 20px;
     }
 
     .header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 50px;
+        padding: 20px 0;
     }
 
     .header h1 {
         color: #facc15;
-        font-size: 2.2rem;
+        font-size: 2.8rem;
+        margin: 0 0 10px 0;
         text-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
     }
 
-    /* Estilo do Login */
-    #login-screen {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: #0f172a;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
+    .header p {
+        color: #94a3b8;
+        font-size: 1.3rem;
+        margin: 0;
     }
 
-    #conteudo-principal { display: none; }
-
-    .topo-acoes {
+    .box {
         background: #1e2937;
-        padding: 20px;
-        border-radius: 15px;
-        margin-bottom: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+        padding: 35px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         border: 1px solid #334155;
-        justify-content: center;
     }
 
-    input, select {
-        padding: 10px;
-        border-radius: 8px;
+    .box h3 {
+        color: #facc15;
+        font-size: 1.5rem;
+        margin: 0 0 25px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 14px 16px;
+        border: none;
+        border-radius: 12px;
+        background: #334155;
+        color: #e2e8f0;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+    /* Estilo melhorado para o select de Sexo */
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23facc15' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 12px;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        background: #475569;
+        box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+        transform: translateY(-2px);
+    }
+
+    textarea {
+        min-height: 110px;
+        resize: vertical;
+        text-transform: uppercase;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .saude-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .saude-item {
+        background: #1e2937;
+        padding: 18px 20px;
+        border-radius: 14px;
         border: 1px solid #334155;
-        background: #0f172a;
-        color: white;
+    }
+
+    .saude-item p {
+        margin: 0 0 10px 0;
+        font-weight: 600;
+        color: #cbd5e1;
+    }
+
+    @media (max-width: 768px) {
+        .saude-grid {
+            grid-template-columns: 1fr;
+        }
     }
 
     button {
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-
-    .btn-atualizar { background: #10b981; color: white; }
-    .btn-imprimir { background: #facc15; color: #1e2937; }
-    .btn-fichas { background: #6366f1; color: white; }
-    .btn-tabela-ficha { background: #6366f1; color: white; font-size: 10px; padding: 5px 10px; }
-
-    /* Tabela */
-    .box-tabela {
-        background: #1e2937;
-        border-radius: 15px;
-        overflow-x: auto;
-        border: 1px solid #334155;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    table {
         width: 100%;
-        border-collapse: collapse;
-        font-size: 11px;
+        padding: 18px;
+        margin-top: 20px;
+        background: linear-gradient(45deg, #facc15, #eab308);
+        color: #1e2937;
+        font-size: 1.2rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        box-shadow: 0 8px 25px rgba(250, 204, 21, 0.3);
     }
 
-    th {
-        background: #0f172a;
+    button:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(250, 204, 21, 0.4);
+    }
+
+    #sucesso {
+        display: none;
+        text-align: center;
+        padding: 80px 40px;
+        background: #1e2937;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        margin-top: 50px;
+    }
+
+    #sucesso h2 {
         color: #facc15;
-        padding: 12px;
-        text-align: left;
-        text-transform: uppercase;
-        border-bottom: 2px solid #334155;
+        font-size: 2.5rem;
+        margin-bottom: 15px;
     }
 
-    td {
-        padding: 10px;
-        border-bottom: 1px solid #334155;
-        white-space: nowrap;
-    }
-
-    tr:hover { background: #2d3a4d; }
-
-    /* CONFIGURAÇÃO DE IMPRESSÃO DO RELATÓRIO */
-    @media print {
-        @page { size: landscape; margin: 0.5cm; }
-        body { background: white !important; color: black !important; padding: 0; }
-        #login-screen, .topo-acoes, .header, .btn-tabela-ficha { display: none !important; }
-        .box-tabela { overflow: visible !important; border: none; }
-        table { width: 100% !important; border: 1px solid #000; font-size: 7pt; table-layout: auto; }
-        th, td { 
-            border: 1px solid #000 !important; 
-            white-space: normal !important; 
-            word-wrap: break-word;
-            color: black !important;
-            padding: 2px !important;
-        }
-        th { background: #eee !important; }
+    #sucesso p {
+        font-size: 1.3rem;
+        color: #94a3b8;
     }
 </style>
 </head>
 
 <body>
 
-<div id="login-screen">
-    <h1 style="color:#facc15">Acesso Restrito</h1>
-    <input type="password" id="senha" placeholder="Digite a senha...">
-    <button class="btn-imprimir" onclick="logar()" style="margin-top:15px">Entrar</button>
-</div>
+<div class="container">
 
-<div id="conteudo-principal" class="container">
     <div class="header">
-        <h1>Relatório de Inscrições - 1º Acampamento</h1>
+        <h1>🙏 1º Acampamento de Servos</h1>
+        <p>Preencha com carinho sua inscrição</p>
     </div>
 
-    <div class="topo-acoes">
-        <input type="text" id="filtroNome" placeholder="Buscar por nome..." oninput="filtrar()">
-        <select id="filtroSexo" onchange="filtrar()">
-            <option value="">Todos os Sexos</option>
-            <option value="MASCULINO">Masculino</option>
-            <option value="FEMININO">Feminino</option>
-        </select>
-        <button class="btn-atualizar" onclick="buscarDados()">🔄 Atualizar Dados</button>
-        <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Relatório</button>
-        <button class="btn-fichas" onclick="imprimirFichasEmMassa()">📄 Imprimir Fichas (Filtro)</button>
+    <form id="form">
+
+        <!-- DADOS PESSOAIS -->
+        <div class="box">
+            <h3><span>📋</span> Dados Pessoais</h3>
+            <div class="grid">
+                <input name="nome" placeholder="Nome completo" required>
+                
+                <!-- Campo Sexo melhorado -->
+                <div style="position: relative;">
+                    <select name="sexo" required style="padding-right: 40px;">
+                        <option value="">Selecione o sexo</option>
+                        <option value="MASCULINO">Masculino</option>
+                        <option value="FEMININO">Feminino</option>
+                        <option value="OUTRO">Outro</option>
+                    </select>
+                </div>
+
+                <input name="cpf" placeholder="CPF">
+                <input name="rg" placeholder="RG">
+                <input name="telefone" placeholder="Telefone">
+                <input name="cidade" placeholder="Cidade">
+                <input name="estado" placeholder="Estado">
+                <input name="endereco" placeholder="Endereço">
+                <input name="numero" placeholder="Número">
+                <input name="nascimento" type="date" max="9999-12-31" placeholder="Data de nascimento">
+                <input name="idade" id="idade" placeholder="Idade" readonly>
+                <input name="peso" placeholder="Peso (kg)">
+                <input name="altura" placeholder="Altura (m)">
+            </div>
+        </div>
+
+        <!-- CONTATO FAMILIAR -->
+        <div class="box">
+            <h3><span>👨‍👩‍👧</span> Contato Familiar</h3>
+            <div class="grid">
+                <input name="familiar" placeholder="Nome do familiar">
+                <input name="tel_familiar" id="tel_familiar" placeholder="Telefone (XX) XXXXX-XXXX">
+                <input name="vinculo" placeholder="Vínculo (pai, mãe, esposo...)">
+            </div>
+        </div>
+
+        <!-- ACAMPAMENTO -->
+        <div class="box">
+            <h3><span>⛺</span> Sobre o Acampamento</h3>
+            <textarea name="acampamentos" placeholder="Já participou de acampamentos anteriores? Quais?"></textarea>
+            <textarea name="motivo" placeholder="Qual o seu motivo para participar deste acampamento?"></textarea>
+        </div>
+
+        <!-- SAÚDE -->
+        <div class="box">
+            <h3><span>🩺</span> Informações de Saúde</h3>
+            <div class="saude-grid">
+                <div class="saude-item">
+                    <p>Pressão alta?</p>
+                    <select onchange="toggle(this,'pressaoCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="pressaoCampo" name="pressaoCampo" class="hidden" placeholder="Qual remédio utiliza?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Diabetes?</p>
+                    <select onchange="toggle(this,'diabetesCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="diabetesCampo" name="diabetesCampo" class="hidden" placeholder="Qual remédio utiliza?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Problema cardíaco?</p>
+                    <select onchange="toggle(this,'coracaoCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="coracaoCampo" name="coracaoCampo" class="hidden" placeholder="Qual problema?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Problema respiratório?</p>
+                    <select onchange="toggle(this,'respCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="respCampo" name="respCampo" class="hidden" placeholder="Qual problema?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Ansiedade ou depressão?</p>
+                    <select onchange="toggle(this,'ansiedadeCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="ansiedadeCampo" name="ansiedadeCampo" class="hidden" placeholder="Qual tratamento?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Tem alguma alergia?</p>
+                    <select onchange="toggle(this,'alergiaCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="alergiaCampo" name="alergiaCampo" class="hidden" placeholder="Quais alergias?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Cirurgia recente?</p>
+                    <select onchange="toggle(this,'cirurgiaCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="cirurgiaCampo" name="cirurgiaCampo" class="hidden" placeholder="Qual cirurgia e quando?">
+                </div>
+
+                <div class="saude-item">
+                    <p>Alguma restrição médica?</p>
+                    <select onchange="toggle(this,'restricaoCampo')">
+                        <option>Não</option><option>Sim</option>
+                    </select>
+                    <input id="restricaoCampo" name="restricaoCampo" class="hidden" placeholder="Qual restrição?">
+                </div>
+            </div>
+
+            <textarea name="obs" placeholder="Observações gerais sobre saúde" style="margin-top: 25px;"></textarea>
+        </div>
+
+        <!-- TERMO -->
+        <div class="box">
+            <h3><span>📜</span> Termo de Responsabilidade</h3>
+            <select name="aceite" required>
+                <option value="">Aceita os termos e condições?</option>
+                <option value="Sim">Sim, aceito os termos</option>
+            </select>
+        </div>
+
+        <button type="submit">✨ Confirmar Inscrição</button>
+
+    </form>
+
+    <div id="sucesso">
+        <h2>✨ Inscrição Confirmada!</h2>
+        <p>Que Deus abençoe grandemente sua vida e sua jornada nesse acampamento 🙏</p>
     </div>
 
-    <div class="box-tabela">
-        <table id="tabelaDados">
-            <thead><tr id="cabecalho"></tr></thead>
-            <tbody id="corpoTabela"></tbody>
-        </table>
-    </div>
 </div>
 
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
-let dadosGlobais = [];
-let cabecalhoGlobal = [];
-
-function logar() {
-    const senha = document.getElementById("senha").value;
-    if(senha === "123") {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("conteudo-principal").style.display = "block";
-        buscarDados();
-    } else {
-        alert("Senha incorreta!");
-    }
+// Toggle
+function toggle(select, id){
+    document.getElementById(id).style.display = 
+        select.value === "Sim" ? "block" : "none";
 }
 
-// FUNÇÃO PARA CORRIGIR FORMATO DE DATA
-function formatarDataBrasileira(valor) {
-    if (!valor) return "";
-    let str = String(valor);
-    if (str.includes("GMT") || (str.length > 20 && str.includes(" "))) {
-        let d = new Date(str);
-        if (!isNaN(d)) {
-            let dia = String(d.getDate()).padStart(2, '0');
-            let dMes = String(d.getMonth() + 1).padStart(2, '0');
-            let ano = d.getFullYear();
-            return `${dia}/${dMes}/${ano}`;
-        }
+// Cálculo de idade
+function calcularIdade() {
+    const nascimento = document.querySelector('input[name="nascimento"]').value;
+    const idadeInput = document.getElementById('idade');
+    
+    if (!nascimento) {
+        idadeInput.value = '';
+        return;
     }
-    return valor;
+
+    const hoje = new Date();
+    const dataNasc = new Date(nascimento);
+    
+    let idade = hoje.getFullYear() - dataNasc.getFullYear();
+    const mes = hoje.getMonth() - dataNasc.getMonth();
+    
+    if (mes < 0 || (mes === 0 && hoje.getDate() < dataNasc.getDate())) {
+        idade--;
+    }
+    
+    idadeInput.value = idade;
 }
 
-// ETAPA EDUCATIVA: Função para limpar os nomes das colunas
-function tratarNomeCabecalho(texto) {
-    // Transforma em MAIÚSCULO e remove espaços extras
-    let formatado = texto.toUpperCase().trim();
-    // Remove o termo "CAMPO" do final (ex: PRESSAOCAMPO vira PRESSAO)
-    if (formatado.endsWith("CAMPO")) {
-        formatado = formatado.slice(0, -5); 
-    }
-    return formatado;
+// Máscara telefone
+function mascaraTelefone(input) {
+    let valor = input.value.replace(/\D/g, '');
+    if (valor.length > 11) valor = valor.substring(0, 11);
+    
+    if (valor.length <= 2) input.value = valor;
+    else if (valor.length <= 7) input.value = `(${valor.substring(0,2)}) ${valor.substring(2)}`;
+    else input.value = `(${valor.substring(0,2)}) ${valor.substring(2,7)}-${valor.substring(7)}`;
 }
 
-function buscarDados() {
-    fetch(scriptURL)
-    .then(res => res.text())
-    .then(data => {
-        const linhas = data.trim().split("\n");
-        dadosGlobais = linhas.map(linha => linha.split("\t"));
-        
-        // DOCUMENTAÇÃO: Aqui aplicamos a limpeza em cada item da primeira linha (cabeçalho)
-        cabecalhoGlobal = dadosGlobais[0].map(h => tratarNomeCabecalho(h));
-        
-        renderizarTabela(dadosGlobais);
+// Inicialização
+document.addEventListener('DOMContentLoaded', () => {
+    const nascimentoInput = document.querySelector('input[name="nascimento"]');
+    const telFamiliar = document.getElementById('tel_familiar');
+
+    nascimentoInput.addEventListener('change', calcularIdade);
+    nascimentoInput.addEventListener('blur', calcularIdade);
+    telFamiliar.addEventListener('input', () => mascaraTelefone(telFamiliar));
+});
+
+// Envio do formulário
+document.getElementById("form").addEventListener("submit", function(e){
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(this));
+
+    fetch("https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec", {
+        method: "POST",
+        body: JSON.stringify(data)
+    })
+    .then(() => {
+        this.style.display = "none";
+        document.getElementById("sucesso").style.display = "block";
+    })
+    .catch(err => {
+        alert("Erro ao enviar inscrição. Tente novamente.");
+        console.error(err);
     });
-}
-
-function renderizarTabela(dados) {
-    const cabecalhoTr = document.getElementById("cabecalho");
-    const corpoTabela = document.getElementById("corpoTabela");
-    
-    cabecalhoTr.innerHTML = "<th>FICHA</th>";
-    cabecalhoGlobal.forEach(h => cabecalhoTr.innerHTML += `<th>${h}</th>`);
-
-    corpoTabela.innerHTML = "";
-    for(let i = 1; i < dados.length; i++) {
-        let tr = document.createElement("tr");
-        
-        // Botão Individual
-        let tdBtn = document.createElement("td");
-        tdBtn.innerHTML = `<button class="btn-tabela-ficha" onclick="gerarFichaIndividual(${i})">ABRIR</button>`;
-        tr.appendChild(tdBtn);
-
-        dados[i].forEach(celula => {
-            let td = document.createElement("td");
-            td.textContent = formatarDataBrasileira(celula);
-            tr.appendChild(td);
-        });
-        corpoTabela.appendChild(tr);
-    }
-}
-
-function filtrar() {
-    const nomeBusca = document.getElementById("filtroNome").value.toLowerCase();
-    const sexoBusca = document.getElementById("filtroSexo").value;
-    
-    // Procura o índice correto mesmo que o nome tenha mudado para maiúsculo
-    const idxNome = cabecalhoGlobal.findIndex(h => h.includes("NOME"));
-    const idxSexo = cabecalhoGlobal.findIndex(h => h.includes("SEXO"));
-
-    const filtrados = [cabecalhoGlobal];
-    for(let i = 1; i < dadosGlobais.length; i++) {
-        const linha = dadosGlobais[i];
-        const bateNome = linha[idxNome] ? linha[idxNome].toLowerCase().includes(nomeBusca) : false;
-        const bateSexo = !sexoBusca || (linha[idxSexo] && linha[idxSexo].toUpperCase() === sexoBusca.toUpperCase());
-        
-        if(bateNome && bateSexo) filtrados.push(linha);
-    }
-    renderizarTabela(filtrados);
-}
-
-function prepararHtmlFicha(index) {
-    const registro = dadosGlobais[index];
-    let html = `
-        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 4px double #000; min-height: 95vh; box-sizing: border-box; margin-bottom: 20px;">
-            <div style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px;">
-                <h2 style="margin: 0;">1º ACAMPAMENTO DE SERVOS</h2>
-                <h3 style="margin: 5px 0; background: #eee; padding: 5px;">FICHA INDIVIDUAL DE INSCRIÇÃO</h3>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-    `;
-
-    cabecalhoGlobal.forEach((header, i) => {
-        let valor = registro[i] || '---';
-        if(header.includes("ACEITE")) return;
-
-        html += `
-            <div style="border-bottom: 1px solid #ccc; padding: 4px;">
-                <div style="font-size: 9px; font-weight: bold; text-transform: uppercase; color: #444;">${header}</div>
-                <div style="font-size: 12px;">${formatarDataBrasileira(valor)}</div>
-            </div>
-        `;
-    });
-
-    html += `
-            </div>
-            <div style="margin-top: 25px; border: 1px solid #000; padding: 10px; font-size: 11px; line-height: 1.3;">
-                <strong>DECLARAÇÃO:</strong> Declaro que todas as informações acima são verdadeiras. Autorizo o uso de minha imagem para fins de divulgação do evento e concordo com as normas estabelecidas.
-            </div>
-            <div style="margin-top: 40px; text-align: center; display: flex; justify-content: space-around;">
-                <div>
-                    <p>_____________________________________</p>
-                    <p style="font-size: 11px;">Assinatura do Campista/Responsável</p>
-                </div>
-                <div>
-                    <p>Data: ____/____/2026</p>
-                </div>
-            </div>
-        </div>
-    `;
-    return html;
-}
-
-function gerarFichaIndividual(index) {
-    const win = window.open('', '', 'width=900,height=1000');
-    win.document.write('<html><head><title>Ficha</title></head><body>');
-    win.document.write(prepararHtmlFicha(index));
-    win.document.write('</body></html>');
-    win.document.close();
-    setTimeout(() => { win.print(); }, 500);
-}
-
-function imprimirFichasEmMassa() {
-    const win = window.open('', '', 'width=900,height=1000');
-    win.document.write('<html><head><title>Fichas em Massa</title></head><body>');
-    
-    // Pega os nomes visíveis na tabela após o filtro para saber quem imprimir
-    const nomesVisiveis = Array.from(document.querySelectorAll("#corpoTabela tr td:nth-child(2)")).map(td => td.textContent.trim());
-
-    for(let i = 1; i < dadosGlobais.length; i++) {
-        // Se o nome da linha original estiver na lista de visíveis, imprime a ficha
-        if(nomesVisiveis.includes(dadosGlobais[i][0].trim())) {
-            win.document.write(prepararHtmlFicha(i));
-        }
-    }
-
-    win.document.write('</body></html>');
-    win.document.close();
-    setTimeout(() => { win.print(); }, 800);
-}
+});
 </script>
 
 </body>
