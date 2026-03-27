@@ -380,7 +380,7 @@ document.getElementById("form").addEventListener("submit", function(e) {
 
     const data = Object.fromEntries(new FormData(this));
 
-    fetch("https://script.google.com/macros/s/AKfycbxbsTENoMDP__53b6W81p1U8cCW37Ud9RZeCPqoEy1jyKdqdvYRjpV3437TgALtT09f/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec", {
         method: "POST",
         body: JSON.stringify(data)
     })
