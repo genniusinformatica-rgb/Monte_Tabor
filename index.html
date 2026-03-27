@@ -371,7 +371,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // Envio do formulário
 document.getElementById("form").addEventListener("submit", function(e){
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(this));
+    const formData = Object.fromEntries(new FormData(this));
+    
+    // Transformar nomes dos campos para o Google Sheets
+    const data = {};
+    for (const [key, value] of Object.entries(formData)) {
+        if (key.endsWith('Campo')) {
+            // Remover 'Campo' do final e converter para maiúsculo
+            data[key.replace('Campo', '').toUpperCase()] = value;
+        } else {
+            // Converter outros campos para maiúsculo
+            data[key.toUpperCase()] = value;
+        }
+    }
 
     fetch("https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec", {
         method: "POST",
