@@ -90,7 +90,7 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        font-size: 13px;
+        font-size: 11px; /* Diminuído para caber mais colunas */
     }
 
     th {
@@ -116,13 +116,13 @@
         body { background: white !important; color: black !important; padding: 0; }
         #login-screen, .topo-acoes, .header, .btn-tabela-ficha { display: none !important; }
         .box-tabela { overflow: visible !important; border: none; }
-        table { width: 100% !important; border: 1px solid #000; font-size: 8pt; table-layout: auto; }
+        table { width: 100% !important; border: 1px solid #000; font-size: 7pt; table-layout: auto; }
         th, td { 
             border: 1px solid #000 !important; 
             white-space: normal !important; 
             word-wrap: break-word;
             color: black !important;
-            padding: 3px !important;
+            padding: 2px !important;
         }
         th { background: #eee !important; }
     }
@@ -178,7 +178,6 @@ function logar() {
     }
 }
 
-// FUNÇÃO PARA CORRIGIR FORMATO DE DATA dd/mm/aaaa
 function formatarDataBrasileira(valor) {
     if (!valor) return "";
     let str = String(valor);
@@ -186,9 +185,9 @@ function formatarDataBrasileira(valor) {
         let d = new Date(str);
         if (!isNaN(d)) {
             let dia = String(d.getDate()).padStart(2, '0');
-            let mes = String(d.getMonth() + 1).padStart(2, '0');
+            let dMes = String(d.getMonth() + 1).padStart(2, '0');
             let ano = d.getFullYear();
-            return `${dia}/${mes}/${ano}`;
+            return `${dia}/${dMes}/${ano}`;
         }
     }
     return valor;
@@ -199,6 +198,7 @@ function buscarDados() {
     .then(res => res.text())
     .then(data => {
         const linhas = data.trim().split("\n");
+        // Garantimos que estamos pegando todas as colunas separadas por TAB
         dadosGlobais = linhas.map(linha => linha.split("\t"));
         cabecalhoGlobal = dadosGlobais[0];
         renderizarTabela(dadosGlobais);
@@ -234,21 +234,21 @@ function filtrar() {
     const nomeBusca = document.getElementById("filtroNome").value.toLowerCase();
     const sexoBusca = document.getElementById("filtroSexo").value;
     
-    const idxNome = cabecalhoGlobal.findIndex(h => h.toLowerCase() === "nome");
-    const idxSexo = cabecalhoGlobal.findIndex(h => h.toLowerCase() === "sexo");
+    const idxNome = cabecalhoGlobal.findIndex(h => h.toLowerCase().trim() === "nome");
+    const idxSexo = cabecalhoGlobal.findIndex(h => h.toLowerCase().trim() === "sexo");
 
     const filtrados = [cabecalhoGlobal];
     for(let i = 1; i < dadosGlobais.length; i++) {
         const linha = dadosGlobais[i];
-        const bateNome = linha[idxNome].toLowerCase().includes(nomeBusca);
-        const bateSexo = !sexoBusca || linha[idxSexo] === sexoBusca;
+        const bateNome = linha[idxNome] ? linha[idxNome].toLowerCase().includes(nomeBusca) : false;
+        const bateSexo = !sexoBusca || (linha[idxSexo] && linha[idxSexo].toUpperCase() === sexoBusca.toUpperCase());
         
         if(bateNome && bateSexo) filtrados.push(linha);
     }
     renderizarTabela(filtrados);
 }
 
-// FUNÇÃO PARA CRIAR O HTML DA FICHA (COM TODOS OS CAMPOS DE SAÚDE)
+// FUNÇÃO PARA CRIAR O HTML DA FICHA (DINÂMICO PARA TODOS OS CAMPOS)
 function prepararHtmlFicha(index) {
     const registro = dadosGlobais[index];
     let html = `
@@ -258,27 +258,32 @@ function prepararHtmlFicha(index) {
                 <h3 style="margin: 5px 0; background: #eee; padding: 5px;">FICHA INDIVIDUAL DE INSCRIÇÃO</h3>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
     `;
 
+    // Aqui o código percorre TODOS os cabeçalhos que existirem na planilha
     cabecalhoGlobal.forEach((header, i) => {
+        let valor = registro[i] || '---';
+        // Pula o aceite do termo para não ocupar espaço
+        if(header.toLowerCase().includes("aceite")) return;
+
         html += `
-            <div style="border-bottom: 1px solid #ccc; padding: 5px;">
-                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase; color: #444;">${header}</div>
-                <div style="font-size: 14px;">${formatarDataBrasileira(registro[i]) || '---'}</div>
+            <div style="border-bottom: 1px solid #ccc; padding: 4px;">
+                <div style="font-size: 9px; font-weight: bold; text-transform: uppercase; color: #444;">${header}</div>
+                <div style="font-size: 12px;">${formatarDataBrasileira(valor)}</div>
             </div>
         `;
     });
 
     html += `
             </div>
-            <div style="margin-top: 40px; border: 1px solid #000; padding: 15px; font-size: 12px; line-height: 1.4;">
-                <strong>DECLARAÇÃO:</strong> Declaro que todas as informações acima, especialmente as de saúde, são verdadeiras. Autorizo o uso de minha imagem para fins de divulgação do evento e concordo com as normas estabelecidas pela organização.
+            <div style="margin-top: 25px; border: 1px solid #000; padding: 10px; font-size: 11px; line-height: 1.3;">
+                <strong>DECLARAÇÃO:</strong> Declaro que todas as informações acima, especialmente as de saúde e restrições médicas, são verdadeiras. Autorizo o uso de minha imagem para fins de divulgação e concordo com as normas da organização.
             </div>
-            <div style="margin-top: 60px; text-align: center; display: flex; justify-content: space-around;">
+            <div style="margin-top: 40px; text-align: center; display: flex; justify-content: space-around;">
                 <div>
                     <p>_____________________________________</p>
-                    <p style="font-size: 12px;">Assinatura do Campista/Responsável</p>
+                    <p style="font-size: 11px;">Assinatura do Campista/Responsável</p>
                 </div>
                 <div>
                     <p>Data: ____/____/2026</p>
@@ -291,7 +296,7 @@ function prepararHtmlFicha(index) {
 
 function gerarFichaIndividual(index) {
     const win = window.open('', '', 'width=900,height=1000');
-    win.document.write('<html><head><title>Ficha</title></head><body>');
+    win.document.write('<html><head><title>Ficha Campista</title></head><body>');
     win.document.write(prepararHtmlFicha(index));
     win.document.write('</body></html>');
     win.document.close();
@@ -302,50 +307,20 @@ function imprimirFichasEmMassa() {
     const win = window.open('', '', 'width=900,height=1000');
     win.document.write('<html><head><title>Fichas em Massa</title></head><body>');
     
-    // Pega as linhas que estão atualmente visíveis na tabela (após filtro)
-    const linhasVisiveis = document.querySelectorAll("#corpoTabela tr");
-    
-    linhasVisiveis.forEach(tr => {
-        // O index real do dado está no array global, precisamos achar pelo nome ou ID
-        // Para simplificar, vamos reconstruir a ficha com base nos TDs da linha
-        let dadosDaLinha = [];
-        tr.querySelectorAll("td").forEach((td, idx) => {
-            if(idx > 0) dadosDaLinha.push(td.textContent);
-        });
-        
-        // Usamos uma versão adaptada da função preparar para massa
-        win.document.write(prepararHtmlFichaMassa(dadosDaLinha));
-    });
+    // Identifica quais linhas estão visíveis no momento (filtradas)
+    const corpoTabela = document.getElementById("corpoTabela");
+    const nomesVisiveis = Array.from(corpoTabela.querySelectorAll("tr td:nth-child(2)")).map(td => td.textContent.trim());
+
+    // Localiza os índices originais no dadosGlobais para manter a integridade dos dados
+    for(let i = 1; i < dadosGlobais.length; i++) {
+        if(nomesVisiveis.includes(dadosGlobais[i][0].trim())) {
+            win.document.write(prepararHtmlFicha(i));
+        }
+    }
 
     win.document.write('</body></html>');
     win.document.close();
     setTimeout(() => { win.print(); }, 800);
-}
-
-function prepararHtmlFichaMassa(dadosLinha) {
-    let html = `
-        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 4px double #000; min-height: 95vh; box-sizing: border-box; margin-bottom: 20px;">
-            <div style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px;">
-                <h2 style="margin: 0;">1º ACAMPAMENTO DE SERVOS</h2>
-                <h3 style="margin: 5px 0; background: #eee; padding: 5px;">FICHA DE INSCRIÇÃO</h3>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-    `;
-    cabecalhoGlobal.forEach((header, i) => {
-        html += `
-            <div style="border-bottom: 1px solid #ccc; padding: 5px;">
-                <div style="font-size: 10px; font-weight: bold; text-transform: uppercase;">${header}</div>
-                <div style="font-size: 13px;">${dadosLinha[i] || '---'}</div>
-            </div>
-        `;
-    });
-    html += `</div>
-            <div style="margin-top: 50px; text-align: center;">
-                <p>_____________________________________</p>
-                <p>Assinatura</p>
-            </div>
-        </div>`;
-    return html;
 }
 </script>
 
