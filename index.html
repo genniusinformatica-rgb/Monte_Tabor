@@ -373,10 +373,21 @@ document.getElementById("form").addEventListener("submit", function(e){
     e.preventDefault();
     const formData = Object.fromEntries(new FormData(this));
     
-    // Transformar nomes dos campos para o Google Sheets
+    // Transformar nomes dos campos para o Google Sheets e filtrar informações de saúde
     const data = {};
     for (const [key, value] of Object.entries(formData)) {
+        // Verifica se é um select de saúde (não termina com 'Campo') e se o valor é 'Não'
+        // Se for 'Não', ignora tanto o select quanto seu campo associado
+        if (!key.endsWith('Campo') && value === 'Não') {
+            continue;
+        }
+        
+        // Se for um campo de saúde (termina com 'Campo') mas seu select associado for 'Não', ignora
         if (key.endsWith('Campo')) {
+            const selectKey = key.replace('Campo', '');
+            if (formData[selectKey] === 'Não') {
+                continue;
+            }
             // Remover 'Campo' do final e converter para maiúsculo
             data[key.replace('Campo', '').toUpperCase()] = value;
         } else {
