@@ -12,26 +12,22 @@
             --border: #334155;
         }
 
-        /* Login */
+        /* Configuração de Login */
         #login-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 2000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 2000;
         }
         #conteudo-principal { display: none; }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
+            background: var(--bg-dark); color: var(--text-main);
             margin: 0; padding: 20px;
         }
 
         .topo {
-            background: var(--card-bg);
-            padding: 20px; border-radius: 15px;
+            background: var(--card-bg); padding: 20px; border-radius: 15px;
             display: flex; flex-wrap: wrap; gap: 10px;
             margin-bottom: 20px; justify-content: center;
             border: 1px solid var(--border);
@@ -49,33 +45,29 @@
         .btn-limpar { background: #475569; color: white; }
         .btn-atualizar { background: #10b981; color: white; }
         .btn-relatorio { background: var(--primary); color: #0f172a; }
+        .btn-ficha-massa { background: #6366f1; color: white; }
         .btn-ficha { background: #6366f1; color: white; padding: 5px 10px; font-size: 0.7rem; }
 
-        /* Tabela no Painel */
-        .tabela-container {
-            width: 100%;
-            overflow-x: auto; /* Scroll apenas na tela */
-            background: var(--card-bg);
-            border-radius: 12px;
-        }
-
+        /* Tabela Visual */
+        .tabela-container { width: 100%; overflow-x: auto; background: var(--card-bg); border-radius: 12px; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { background: #111827; color: var(--primary); padding: 12px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid var(--border); }
+        th { background: #111827; color: var(--primary); padding: 12px; text-align: left; position: sticky; top: 0; }
+        td { padding: 10px; border-bottom: 1px solid var(--border); white-space: nowrap; }
 
-        /* AJUSTE PARA IMPRESSÃO DO RELATÓRIO GERAL */
+        /* CORREÇÃO DA IMPRESSÃO DO RELATÓRIO (SEM CORTAR) */
         @media print {
-            body { background: white !important; color: black !important; }
-            .topo, #login-screen { display: none !important; }
-            .tabela-container { overflow: visible !important; } /* Remove o scroll na impressão */
-            table { width: 100% !important; border: 1px solid #000; table-layout: auto !important; }
+            @page { size: landscape; margin: 1cm; }
+            body { background: white !important; color: black !important; padding: 0; }
+            .topo, #login-screen, .btn-ficha, h1 { display: none !important; }
+            .tabela-container { overflow: visible !important; }
+            table { width: 100% !important; border: 1px solid #000; font-size: 8pt; table-layout: auto; }
             th, td { 
                 border: 1px solid #000 !important; 
-                white-space: normal !important; /* Faz o texto quebrar linha em vez de esticar */
-                word-wrap: break-word;
-                color: black !important;
+                white-space: normal !important; /* Quebra o texto para não cortar a folha */
+                color: black !important; padding: 4px !important;
             }
-            .btn-ficha { display: none !important; } /* Esconde botão de ficha no relatório geral */
+            th { background: #eee !important; }
+            .no-print { display: none !important; }
         }
     </style>
 </head>
@@ -88,14 +80,15 @@
 </div>
 
 <div id="conteudo-principal">
-    <h1 style="text-align:center; color:var(--primary)">📋 Painel de Inscrições</h1>
+    <h1 style="text-align:center; color:var(--primary)">📋 Gestão de Inscrições</h1>
 
     <div class="topo">
         <input type="text" id="busca" placeholder="🔍 Buscar...">
         <select id="filtroSexo" onchange="aplicarFiltro()"><option value="">Sexo</option></select>
         <button class="btn-limpar" onclick="limparFiltros()">Limpar</button>
         <button class="btn-atualizar" onclick="carregarDados()">Atualizar</button>
-        <button class="btn-relatorio" onclick="window.print()">Imprimir Relatório Geral</button>
+        <button class="btn-relatorio" onclick="window.print()">Imprimir Relatório</button>
+        <button class="btn-ficha-massa" onclick="imprimirFichasFiltradas()">Imprimir Fichas (Filtro)</button>
     </div>
 
     <div class="tabela-container">
@@ -106,6 +99,7 @@
 <script>
 const URL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
 let todosDados = [];
+let dadosFiltradosAtuais = [];
 let headers = [];
 
 function verificarSenha() {
@@ -116,11 +110,10 @@ function verificarSenha() {
     } else { alert("Senha incorreta!"); }
 }
 
-// Formatação de data dd/mm/aaaa
 function formatarData(texto) {
     if (!texto) return "";
     const str = String(texto);
-    if (str.includes("GMT") || str.length > 20) {
+    if (str.includes("GMT") || (str.length > 20 && str.includes(" "))) {
         const d = new Date(str);
         if (!isNaN(d)) return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
     }
@@ -132,6 +125,7 @@ function carregarDados() {
         const linhas = texto.trim().split("\n");
         todosDados = linhas.map(l => l.split("\t"));
         headers = todosDados[0];
+        dadosFiltradosAtuais = [...todosDados];
         popularFiltros();
         mostrarTabela(todosDados);
     });
@@ -147,12 +141,13 @@ function popularFiltros() {
 }
 
 function mostrarTabela(dados) {
-    let html = "<thead><tr><th>AÇÕES</th>";
+    let html = "<thead><tr><th class='no-print'>FICHA</th>";
     headers.forEach(h => html += `<th>${h.toUpperCase()}</th>`);
     html += "</tr></thead><tbody>";
 
     for (let i = 1; i < dados.length; i++) {
-        html += `<tr><td><button class="btn-ficha" onclick="gerarFicha(${i})">FICHA</button></td>`;
+        if (dados[i] === headers) continue;
+        html += `<tr><td class='no-print'><button class="btn-ficha" onclick="gerarFichaIndividual(${i})">ABRIR</button></td>`;
         dados[i].forEach(cel => html += `<td>${formatarData(cel)}</td>`);
         html += "</tr>";
     }
@@ -163,67 +158,80 @@ function aplicarFiltro() {
     const busca = document.getElementById("busca").value.toLowerCase();
     const sexo = document.getElementById("filtroSexo").value;
     const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
-    const filtrado = [headers];
+    
+    dadosFiltradosAtuais = [headers];
     for (let i = 1; i < todosDados.length; i++) {
         const bateBusca = todosDados[i].join(" ").toLowerCase().includes(busca);
         const bateSexo = !sexo || todosDados[i][idxSexo] === sexo;
-        if (bateBusca && bateSexo) filtrado.push(todosDados[i]);
+        if (bateBusca && bateSexo) dadosFiltradosAtuais.push(todosDados[i]);
     }
-    mostrarTabela(filtrado);
+    mostrarTabela(dadosFiltradosAtuais);
 }
 
 function limparFiltros() {
     document.getElementById("busca").value = "";
     document.getElementById("filtroSexo").value = "";
+    dadosFiltradosAtuais = [...todosDados];
     mostrarTabela(todosDados);
 }
 
-// FUNÇÃO DA FICHA INDIVIDUAL
-function gerarFicha(index) {
-    const campista = todosDados[index];
-    const win = window.open('', '', 'width=900,height=1000');
-    
-    let conteudoFicha = `
-        <html><head><title>Ficha de Inscrição</title>
-        <style>
-            body { font-family: sans-serif; padding: 40px; color: #333; }
-            .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
-            .secao { background: #f0f0f0; padding: 8px; font-weight: bold; margin-top: 20px; border: 1px solid #ccc; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-            .campo { border-bottom: 1px solid #eee; padding: 5px; font-size: 14px; }
-            .label { font-weight: bold; color: #555; font-size: 12px; text-transform: uppercase; }
-            .valor { font-size: 15px; color: #000; }
-            .footer { margin-top: 50px; text-align: center; border-top: 1px solid #000; padding-top: 20px; }
-        </style></head>
-        <body>
-            <div class="header">
-                <h2>1º ACAMPAMENTO DE SERVOS</h2>
-                <p>FICHA INDIVIDUAL DE INSCRIÇÃO</p>
+// FUNÇÃO PARA CRIAR O CONTEÚDO DA FICHA (REUTILIZÁVEL)
+function montarLayoutFicha(linhaDados) {
+    let ficha = `
+        <div style="page-break-after: always; font-family: sans-serif; padding: 20px; color: #000; border: 2px solid #000; margin-bottom: 20px; position: relative; min-height: 95vh;">
+            <div style="text-align: center; border-bottom: 2px solid #000; margin-bottom: 15px;">
+                <h2 style="margin: 5px 0;">1º ACAMPAMENTO DE SERVOS</h2>
+                <h4 style="margin: 5px 0; color: #444;">FICHA OFICIAL DE INSCRIÇÃO</h4>
             </div>
-            <div class="secao">DADOS PESSOAIS</div>
-            <div class="grid">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
     `;
-
+    
     headers.forEach((h, i) => {
-        conteudoFicha += `
-            <div class="campo">
-                <div class="label">${h}</div>
-                <div class="valor">${formatarData(campista[i]) || '---'}</div>
-            </div>`;
+        ficha += `
+            <div style="border-bottom: 1px solid #ccc; padding: 4px;">
+                <small style="font-weight: bold; text-transform: uppercase; color: #666; font-size: 9px;">${h}</small><br>
+                <span style="font-size: 13px;">${formatarData(linhaDados[i]) || '---'}</span>
+            </div>
+        `;
     });
 
-    conteudoFicha += `
+    ficha += `
             </div>
-            <div class="footer">
+            <div style="margin-top: 30px; border: 1px solid #000; padding: 10px; font-size: 11px;">
+                <strong>TERMO:</strong> Declaro que as informações acima são verdadeiras e me comprometo a seguir as normas do acampamento.
+            </div>
+            <div style="margin-top: 40px; text-align: center;">
                 <p>___________________________________________________</p>
-                <p>Assinatura do Responsável / Campista</p>
+                <small>Assinatura do Campista / Responsável</small>
             </div>
-        </body></html>
+        </div>
     `;
+    return ficha;
+}
 
-    win.document.write(conteudoFicha);
+// IMPRIMIR APENAS UMA
+function gerarFichaIndividual(index) {
+    const win = window.open('', '', 'width=900,height=1000');
+    win.document.write('<html><head><title>Ficha</title></head><body>');
+    win.document.write(montarLayoutFicha(todosDados[index]));
+    win.document.write('</body></html>');
     win.document.close();
     setTimeout(() => { win.print(); }, 500);
+}
+
+// IMPRIMIR TODAS DO FILTRO (UMA POR FOLHA)
+function imprimirFichasFiltradas() {
+    const win = window.open('', '', 'width=900,height=1000');
+    win.document.write('<html><head><title>Fichas em Massa</title></head><body>');
+    
+    for (let i = 1; i < dadosFiltradosAtuais.length; i++) {
+        if (dadosFiltradosAtuais[i] === headers) continue;
+        win.document.write(montarLayoutFicha(dadosFiltradosAtuais[i]));
+    }
+    
+    win.document.write('</body></html>');
+    win.document.close();
+    setTimeout(() => { win.print(); }, 800);
 }
 
 document.getElementById("busca").addEventListener("input", aplicarFiltro);
