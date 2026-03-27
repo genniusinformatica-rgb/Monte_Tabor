@@ -2,240 +2,262 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Cadastros - 1º Acampamento de Servos</title>
+    <title>Painel Administrativo - Acampamento de Servos</title>
     <style>
-        /* Estilo para a tela de login */
+        :root {
+            --primary: #facc15;
+            --bg-dark: #0f172a;
+            --card-bg: #1e2937;
+            --text-main: #e2e8f0;
+            --border: #334155;
+        }
+
+        /* Tela de Login */
         #login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: #0a0a0a;
+            background: var(--bg-dark);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
         }
 
-        /* Esconde o conteúdo principal antes do login */
         #conteudo-principal { display: none; }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #0a0a0a;
-            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
             margin: 0;
             padding: 20px;
         }
+
         h1 {
-            color: #facc15;
+            color: var(--primary);
             text-align: center;
-            margin-bottom: 25px;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
         }
+
         .topo {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 30px;
             justify-content: center;
-            align-items: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
-        input[type="text"], input[type="password"], select {
-            padding: 12px 16px;
+
+        input, select {
+            padding: 12px 15px;
             border-radius: 8px;
-            border: none;
-            background: #1f1f1f;
+            border: 1px solid var(--border);
+            background: #0f172a;
             color: white;
-            font-size: 1rem;
-            min-width: 200px;
+            font-size: 0.9rem;
+            outline: none;
         }
+
+        input:focus { border-color: var(--primary); }
+
         button {
-            padding: 12px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 1rem;
-            transition: 0.3s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        button:hover { opacity: 0.8; }
-        .btn-limpar { background: #4b5563; color: white; }
-        .btn-atualizar { background: #22c55e; color: black; }
-        .btn-relatorio { background: #eab308; color: black; }
-        .btn-login { background: #facc15; color: black; margin-top: 10px; }
 
-        .tabela-container { overflow-x: auto; }
+        .btn-limpar { background: #475569; color: white; }
+        .btn-atualizar { background: #10b981; color: white; }
+        .btn-relatorio { background: var(--primary); color: #0f172a; }
+        button:hover { transform: translateY(-2px); opacity: 0.9; }
+
+        /* Estilo da Tabela */
+        .tabela-wrapper {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .scroll-container { overflow-x: auto; }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            background: #1a1a1a;
-            margin-top: 10px;
+            font-size: 0.85rem;
         }
-        th, td {
-            border: 1px solid #444;
-            padding: 12px 10px;
+
+        th {
+            background: #111827;
+            color: var(--primary);
+            padding: 15px;
             text-align: left;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
             white-space: nowrap;
         }
-        th {
-            background: #2a2a2a;
-            color: #facc15;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+
+        tr:nth-child(even) { background: #242f3d; }
+        tr:hover { background: #2d3a4d; }
+
+        /* Estilo para Impressão */
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .topo, #login-screen { display: none !important; }
+            .tabela-wrapper { border: none; box-shadow: none; }
+            th { background: #eee !important; color: black !important; border: 1px solid #ddd; }
+            td { border: 1px solid #ddd; font-size: 10px; }
+            h1 { color: black; font-size: 1.5rem; }
         }
-        tr:nth-child(even) { background: #222; }
-        tr:hover { background: #333; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <h1>Acesso Restrito</h1>
-    <input type="password" id="senhaInput" placeholder="Digite a senha...">
-    <button class="btn-login" onclick="verificarSenha()">Entrar no Painel</button>
+    <input type="password" id="senhaInput" placeholder="Digite a senha (123)...">
+    <button class="btn-relatorio" style="margin-top:15px" onclick="verificarSenha()">Entrar no Sistema</button>
 </div>
 
 <div id="conteudo-principal">
-    <h1>Painel de Cadastros - 1º Acampamento de Servos</h1>
+    <h1>Relatório de Inscrições - 1º Acampamento</h1>
 
     <div class="topo">
-        <input type="text" id="busca" placeholder="🔍 Busca geral...">
-        <select id="filtroSexo" onchange="aplicarFiltro()">
-            <option value="">Todos os sexos</option>
-        </select>
-        <select id="filtroCidade" onchange="aplicarFiltro()">
-            <option value="">Todas as cidades</option>
-        </select>
+        <input type="text" id="busca" placeholder="🔍 Buscar participante...">
+        <select id="filtroSexo" onchange="aplicarFiltro()"><option value="">Todos os Sexos</option></select>
+        <select id="filtroCidade" onchange="aplicarFiltro()"><option value="">Todas as Cidades</option></select>
         <button class="btn-limpar" onclick="limparFiltros()">🧹 Limpar</button>
         <button class="btn-atualizar" onclick="carregarDados()">🔄 Atualizar</button>
-        <button class="btn-relatorio" onclick="imprimir()">🖨 Relatório</button>
+        <button class="btn-relatorio" onclick="window.print()">🖨 Gerar PDF / Imprimir</button>
     </div>
 
-    <div class="tabela-container">
-        <table id="tabela"></table>
+    <div class="tabela-wrapper">
+        <div class="scroll-container">
+            <table id="tabela"></table>
+        </div>
     </div>
 </div>
 
 <script>
-// CONFIGURAÇÃO
 const URL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
 const SENHA_CORRETA = "123";
-
 let todosDados = [];
 let headers = [];
 
-// Função de Login
 function verificarSenha() {
-    const senhaDigitada = document.getElementById("senhaInput").value;
-    if (senhaDigitada === SENHA_CORRETA) {
+    if (document.getElementById("senhaInput").value === SENHA_CORRETA) {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("conteudo-principal").style.display = "block";
-        carregarDados(); // Carrega os dados só após o login
-    } else {
-        alert("Senha incorreta!");
-    }
+        carregarDados();
+    } else { alert("Senha incorreta!"); }
 }
 
-// Permitir apertar "Enter" para logar
-document.getElementById("senhaInput").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") verificarSenha();
-});
+// FUNÇÃO MÁGICA: Corrige as datas longas do Google
+function formatarData(texto) {
+    if (!texto) return "";
+    const str = String(texto);
+    
+    // Se parecer uma data longa (contém nomes de meses em inglês ou GMT)
+    if (str.includes("GMT") || str.length > 20) {
+        const dataObj = new Date(str);
+        if (!isNaN(dataObj)) {
+            const dia = String(dataObj.getDate()).padStart(2, '0');
+            const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
+            const ano = dataObj.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+    }
+    return str; // Se não for data, retorna o texto original
+}
 
-// Carregar dados da planilha
 function carregarDados() {
     fetch(URL)
         .then(res => res.text())
         .then(texto => {
-            if (!texto || texto.trim() === "") {
-                alert("Nenhum dado encontrado na planilha.");
-                return;
-            }
-
             const linhas = texto.trim().split("\n");
             todosDados = linhas.map(l => l.split("\t"));
-            headers = todosDados[0] || [];
-
+            headers = todosDados[0];
             popularFiltros();
             mostrarTabela(todosDados);
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Erro ao carregar os dados. Verifique a conexão e se a planilha está pública.");
         });
 }
 
-// Popular filtros de Sexo e Cidade
 function popularFiltros() {
-    // Encontrar índice exato da coluna "Sexo" (evitando conflito com telefone)
-    const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
-    const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
-
-    const selSexo = document.getElementById("filtroSexo");
-    const selCidade = document.getElementById("filtroCidade");
-
-    // Limpa e reseta
-    selSexo.innerHTML = '<option value="">Todos os sexos</option>';
-    selCidade.innerHTML = '<option value="">Todas as cidades</option>';
-
+    const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
+    const idxCidade = headers.findIndex(h => h.toLowerCase() === "cidade");
+    
     const sexos = new Set();
     const cidades = new Set();
 
     for (let i = 1; i < todosDados.length; i++) {
-        if (idxSexo !== -1) {
-            let s = todosDados[i][idxSexo];
-            if (s && s.trim() !== "") sexos.add(s.trim());
-        }
-        if (idxCidade !== -1) {
-            let c = todosDados[i][idxCidade];
-            if (c && c.trim() !== "") cidades.add(c.trim());
-        }
+        if(todosDados[i][idxSexo]) sexos.add(todosDados[i][idxSexo].trim());
+        if(todosDados[i][idxCidade]) cidades.add(todosDados[i][idxCidade].trim());
     }
 
+    const selSexo = document.getElementById("filtroSexo");
+    const selCidade = document.getElementById("filtroCidade");
+    
+    selSexo.innerHTML = '<option value="">Todos os Sexos</option>';
     sexos.forEach(s => selSexo.innerHTML += `<option value="${s}">${s}</option>`);
+    
+    selCidade.innerHTML = '<option value="">Todas as Cidades</option>';
     cidades.forEach(c => selCidade.innerHTML += `<option value="${c}">${c}</option>`);
 }
 
-// Mostrar tabela
-function mostrarTabela(dadosMostrar) {
-    if (dadosMostrar.length === 0) {
-        document.getElementById("tabela").innerHTML = "<tr><td>Nenhum resultado encontrado.</td></tr>";
-        return;
-    }
+function mostrarTabela(dados) {
+    let html = "<thead><tr>";
+    headers.forEach(h => html += `<th>${h}</th>`);
+    html += "</tr></thead><tbody>";
 
-    let html = "<tr>";
-    headers.forEach(col => html += `<th>${col}</th>`);
-    html += "</tr>";
-
-    for (let i = 1; i < dadosMostrar.length; i++) {
+    for (let i = 1; i < dados.length; i++) {
         html += "<tr>";
-        dadosMostrar[i].forEach(cel => html += `<td>${cel || ''}</td>`);
+        dados[i].forEach((celula, idx) => {
+            // Aplica a formatação de data em todas as colunas para garantir
+            html += `<td>${formatarData(celula)}</td>`;
+        });
         html += "</tr>";
     }
+    html += "</tbody>";
     document.getElementById("tabela").innerHTML = html;
 }
 
-// Lógica de Filtros Combinados
 function aplicarFiltro() {
-    const busca = document.getElementById("busca").value.toLowerCase().trim();
-    const sexoFiltro = document.getElementById("filtroSexo").value;
-    const cidadeFiltro = document.getElementById("filtroCidade").value;
-
-    const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
-    const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
+    const busca = document.getElementById("busca").value.toLowerCase();
+    const sexo = document.getElementById("filtroSexo").value;
+    const cidade = document.getElementById("filtroCidade").value;
+    
+    const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
+    const idxCidade = headers.findIndex(h => h.toLowerCase() === "cidade");
 
     const filtrado = [headers];
-
     for (let i = 1; i < todosDados.length; i++) {
         const linha = todosDados[i];
-        const textoLinha = linha.join(" ").toLowerCase();
-        
-        const bateBusca = textoLinha.includes(busca);
-        const bateSexo = sexoFiltro === "" || linha[idxSexo] === sexoFiltro;
-        const bateCidade = cidadeFiltro === "" || linha[idxCidade] === cidadeFiltro;
+        const bateBusca = linha.join(" ").toLowerCase().includes(busca);
+        const bateSexo = !sexo || linha[idxSexo] === sexo;
+        const bateCidade = !cidade || linha[idxCidade] === cidade;
 
-        if (bateBusca && bateSexo && bateCidade) {
-            filtrado.push(linha);
-        }
+        if (bateBusca && bateSexo && bateCidade) filtrado.push(linha);
     }
     mostrarTabela(filtrado);
 }
@@ -247,30 +269,9 @@ function limparFiltros() {
     mostrarTabela(todosDados);
 }
 
-function imprimir() {
-    const conteudoTabela = document.getElementById("tabela").innerHTML;
-    const win = window.open('', '', 'width=1200,height=800');
-    win.document.write(`
-        <html><head><title>Relatório</title>
-        <style>
-            body { font-family: Arial; padding: 20px; }
-            h1 { text-align: center; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #333; padding: 8px; text-align: left; font-size: 12px; }
-            th { background: #eee; }
-        </style></head>
-        <body>
-            <h1>Relatório de Inscrições - 1º Acampamento de Servos</h1>
-            <table>${conteudoTabela}</table>
-        </body></html>
-    `);
-    win.document.close();
-    win.print();
-}
-
-// Evento de busca em tempo real
 document.getElementById("busca").addEventListener("input", aplicarFiltro);
-
+document.getElementById("senhaInput").addEventListener("keypress", (e) => { if(e.key === "Enter") verificarSenha(); });
 </script>
+
 </body>
 </html>
