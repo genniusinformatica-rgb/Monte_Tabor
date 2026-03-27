@@ -2,247 +2,131 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Painel</title>
-
+<title>Painel de Inscrições - Acampamento</title>
 <style>
-body {
-  font-family: Arial;
-  background: #111;
-  color: white;
-  padding: 20px;
-}
-
-/* LOGIN */
-#loginBox {
-  max-width: 300px;
-  margin: auto;
-  margin-top: 100px;
-  background: #222;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-}
-
-/* PAINEL */
-#painel {
-  display: none;
-}
-
-input, select, button {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
-  border: none;
-}
-
-button {
-  background: #00c853;
-  color: white;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #00a844;
-}
-
-.topo {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-}
-
-th, td {
-  border: 1px solid #444;
-  padding: 8px;
-}
-
-th {
-  background: #222;
-}
+    body {font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; margin: 0;}
+    h2 {color: #facc15;}
+    #loginBox {max-width: 360px; margin: 120px auto; background: #1e2937; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);}
+    input[type="password"] {width: 100%; padding: 14px; margin: 15px 0; border-radius: 8px; border: none; background: #334155; color: white; font-size: 16px;}
+    button {padding: 14px 30px; margin: 10px 5px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px;}
+    #btnEntrar {background: #facc15; color: #1e2937; font-weight: bold;}
+    #painel {display: none;}
+    .topo {display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center;}
+    input[type="text"], select {padding: 12px; border-radius: 8px; border: none; background: #334155; color: white;}
+    table {width: 100%; border-collapse: collapse; background: #1e2937;}
+    th, td {border: 1px solid #475569; padding: 10px 8px; text-align: left;}
+    th {background: #334155; color: #facc15; position: sticky; top: 0;}
+    tr:nth-child(even) {background: #26334a;}
+    .btn {background: #facc15; color: #1e2937; font-weight: bold;}
+    .btn:hover {background: #eab308;}
 </style>
-
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginBox">
-  <h2>Login</h2>
-  <input type="password" id="senha" placeholder="Senha">
-  <button onclick="login()">Entrar</button>
-  <p id="erro"></p>
+    <h2>🔐 Painel Administrativo</h2>
+    <p>1º Acampamento de Servos</p>
+    <input type="password" id="senha" placeholder="Digite a senha">
+    <br>
+    <button id="btnEntrar" onclick="login()">Entrar</button>
+    <p id="erro" style="color:#ef4444;"></p>
 </div>
 
-<!-- PAINEL -->
 <div id="painel">
-  <h2>Painel de Cadastros</h2>
-
-  <div class="topo">
-    <input type="text" id="busca" placeholder="Busca geral...">
-
-    <select id="sexo">
-      <option value="">Todos os sexos</option>
-    </select>
-
-    <select id="cidade">
-      <option value="">Todas cidades</option>
-    </select>
-
-    <button onclick="limparFiltros()">🧹 Limpar</button>
-    <button onclick="atualizar()">🔄 Atualizar</button>
-    <button onclick="imprimir()">🖨 Relatório</button>
-  </div>
-
-  <table id="tabela"></table>
+    <h2>📋 Inscrições - Acampamento</h2>
+    <div class="topo">
+        <input type="text" id="busca" placeholder="🔍 Busca geral...">
+        <select id="filtroSexo"><option value="">Todos os sexos</option></select>
+        <select id="filtroCidade"><option value="">Todas as cidades</option></select>
+        <button class="btn" onclick="limparFiltros()">🧹 Limpar</button>
+        <button class="btn" onclick="atualizar()">🔄 Atualizar Dados</button>
+        <button class="btn" onclick="imprimir()">🖨 Gerar Relatório</button>
+    </div>
+    <table id="tabela"></table>
 </div>
 
 <script>
-const SENHA = "123";
+const SENHA_CORRETA = "123";
+const URL = "https://script.google.com/macros/s/AKfycbwOff6Uw_mM_euRN_WimGgHRQ_GcHwM_vyglP_u6VseSZmV8HeGiLjXO7EtO67k0gkq/exec";  
+// ↑↑↑ COLE AQUI O NOVO LINK DA IMPLANTAÇÃO (o que você copiou agora)
 
-const URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR30UaJes9BEyJ_qB3cg5hmysSrieweS2OafckPb9vePTtfpI0bN7D89gTBvRFsNm2FwKjGZ2bhHFP2/pub?output=tsv";
+let todosDados = [];
+let headers = [];
 
-let dados = [];
-
-// LOGIN
 function login() {
-  if (document.getElementById("senha").value === SENHA) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("painel").style.display = "block";
-    carregar();
-  } else {
-    document.getElementById("erro").innerText = "Senha incorreta";
-  }
+    if (document.getElementById("senha").value === SENHA_CORRETA) {
+        document.getElementById("loginBox").style.display = "none";
+        document.getElementById("painel").style.display = "block";
+        carregarDados();
+    } else {
+        document.getElementById("erro").innerText = "Senha incorreta!";
+    }
 }
 
-// CARREGAR DADOS
-function carregar() {
-  fetch(URL)
-    .then(res => res.text())
-    .then(texto => {
-      const linhas = texto.trim().split("\n");
-      dados = linhas.map(l => l.split("\t"));
-
-      popularCombos();
-      aplicarFiltro();
-    });
+function carregarDados() {
+    fetch(URL)
+        .then(res => res.text())
+        .then(texto => {
+            if (texto.trim() === "" || texto.includes("ERRO")) {
+                alert("Sem dados ou erro na conexão.\n\nConfira se tem inscrições na planilha.");
+                return;
+            }
+            const linhas = texto.trim().split("\n");
+            todosDados = linhas.map(l => l.split("\t"));
+            headers = todosDados[0] || [];
+            popularFiltros();
+            mostrarTabela(todosDados);
+        })
+        .catch(() => alert("Erro ao conectar ao Google. Verifique a implantação e o link."));
 }
 
-// ATUALIZAR (RECARREGA DO GOOGLE)
-function atualizar() {
-  carregar();
+function atualizar() { carregarDados(); }
+
+function popularFiltros() {
+    if (todosDados.length < 2) return;
+    const idxSexo = headers.findIndex(h => String(h).toLowerCase().includes("sexo"));
+    const idxCidade = headers.findIndex(h => String(h).toLowerCase().includes("cidade"));
+
+    const setSexo = new Set(), setCidade = new Set();
+    for (let i = 1; i < todosDados.length; i++) {
+        if (idxSexo !== -1 && todosDados[i][idxSexo]) setSexo.add(todosDados[i][idxSexo]);
+        if (idxCidade !== -1 && todosDados[i][idxCidade]) setCidade.add(todosDados[i][idxCidade]);
+    }
+
+    document.getElementById("filtroSexo").innerHTML = '<option value="">Todos os sexos</option>' + Array.from(setSexo).map(s => `<option value="${s}">${s}</option>`).join('');
+    document.getElementById("filtroCidade").innerHTML = '<option value="">Todas as cidades</option>' + Array.from(setCidade).map(c => `<option value="${c}">${c}</option>`).join('');
 }
 
-// LIMPAR FILTROS
-function limparFiltros() {
-  document.getElementById("busca").value = "";
-  document.getElementById("sexo").value = "";
-  document.getElementById("cidade").value = "";
-  aplicarFiltro();
+function mostrarTabela(dadosMostrar) {
+    let html = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+    for (let i = 1; i < dadosMostrar.length; i++) {
+        html += "<tr>" + dadosMostrar[i].map(c => `<td>${c || ''}</td>`).join('') + "</tr>";
+    }
+    document.getElementById("tabela").innerHTML = html;
 }
 
-// POPULAR COMBOS
-function popularCombos() {
-  let sexos = new Set();
-  let cidades = new Set();
-
-  dados.slice(1).forEach(linha => {
-    sexos.add(linha[3]);
-    cidades.add(linha[5]);
-  });
-
-  const selectSexo = document.getElementById("sexo");
-  const selectCidade = document.getElementById("cidade");
-
-  selectSexo.innerHTML = '<option value="">Todos os sexos</option>';
-  selectCidade.innerHTML = '<option value="">Todas cidades</option>';
-
-  sexos.forEach(s => {
-    if (s) selectSexo.innerHTML += `<option>${s}</option>`;
-  });
-
-  cidades.forEach(c => {
-    if (c) selectCidade.innerHTML += `<option>${c}</option>`;
-  });
-}
-
-// MOSTRAR
-function mostrar(lista) {
-  let html = "<tr>";
-  lista[0].forEach(col => html += `<th>${col}</th>`);
-  html += "</tr>";
-
-  for (let i = 1; i < lista.length; i++) {
-    html += "<tr>";
-    lista[i].forEach(c => html += `<td>${c}</td>`);
-    html += "</tr>";
-  }
-
-  document.getElementById("tabela").innerHTML = html;
-}
-
-// FILTRO AUTOMÁTICO
 function aplicarFiltro() {
-  const busca = document.getElementById("busca").value.toLowerCase();
-  const sexo = document.getElementById("sexo").value;
-  const cidade = document.getElementById("cidade").value;
-
-  let filtrado = dados.filter((linha, i) => {
-    if (i === 0) return true;
-
-    let textoLinha = linha.join(" ").toLowerCase();
-
-    return (
-      textoLinha.includes(busca) &&
-      (sexo === "" || linha[3] === sexo) &&
-      (cidade === "" || linha[5] === cidade)
-    );
-  });
-
-  mostrar(filtrado);
+    const busca = document.getElementById("busca").value.toLowerCase().trim();
+    const filtrado = [todosDados[0]];
+    for (let i = 1; i < todosDados.length; i++) {
+        if (todosDados[i].join(" ").toLowerCase().includes(busca)) filtrado.push(todosDados[i]);
+    }
+    mostrarTabela(filtrado);
 }
 
-// EVENTOS AUTOMÁTICOS
-document.addEventListener("input", aplicarFiltro);
-document.addEventListener("change", aplicarFiltro);
+function limparFiltros() {
+    document.getElementById("busca").value = "";
+    aplicarFiltro();
+}
 
-// RELATÓRIO
 function imprimir() {
-  let conteudo = document.getElementById("tabela").innerHTML;
-  let dataAtual = new Date().toLocaleDateString();
-
-  let win = window.open('', '', 'width=900,height=700');
-
-  win.document.write(`
-    <html>
-    <head>
-      <title>Relatório</title>
-      <style>
-        body { font-family: Arial; padding: 30px; }
-        h1 { text-align: center; }
-        .data { text-align: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #333; color: #fff; padding: 10px; }
-        td { border: 1px solid #ccc; padding: 8px; }
-        tr:nth-child(even) { background: #f2f2f2; }
-      </style>
-    </head>
-    <body>
-      <h1>Relatório de Cadastros</h1>
-      <div class="data">Gerado em: ${dataAtual}</div>
-      <table>${conteudo}</table>
-    </body>
-    </html>
-  `);
-
-  win.document.close();
-  win.print();
+    const win = window.open('');
+    win.document.write(document.getElementById("tabela").outerHTML);
+    win.document.close();
+    win.print();
 }
-</script>
 
+document.getElementById("busca").addEventListener("input", aplicarFiltro);
+</script>
 </body>
 </html>
