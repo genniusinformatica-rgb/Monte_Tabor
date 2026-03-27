@@ -5,30 +5,28 @@
 <title>Painel de Inscrições - Acampamento</title>
 <style>
     body {font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; margin: 0;}
-    h2 {color: #facc15; margin-bottom: 10px;}
+    h2 {color: #facc15;}
     #loginBox {
         max-width: 360px; margin: 120px auto; background: #1e2937; padding: 40px; 
         border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
-    input[type="password"] {width: 100%; padding: 14px; margin: 15px 0; border-radius: 8px; 
-        border: none; background: #334155; color: white; font-size: 16px;}
+    input[type="password"] {width: 100%; padding: 14px; margin: 15px 0; border-radius: 8px; border: none; background: #334155; color: white; font-size: 16px;}
     button {padding: 14px 30px; margin: 10px 5px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px;}
     #btnEntrar {background: #facc15; color: #1e2937; font-weight: bold;}
     #painel {display: none;}
     .topo {display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center;}
-    input[type="text"], select {padding: 12px; border-radius: 8px; border: none; background: #334155; color: white; min-width: 180px;}
-    table {width: 100%; border-collapse: collapse; background: #1e2937; margin-top: 10px;}
+    input[type="text"], select {padding: 12px; border-radius: 8px; border: none; background: #334155; color: white;}
+    table {width: 100%; border-collapse: collapse; background: #1e2937;}
     th, td {border: 1px solid #475569; padding: 10px 8px; text-align: left;}
     th {background: #334155; color: #facc15; position: sticky; top: 0;}
     tr:nth-child(even) {background: #26334a;}
     .btn {background: #facc15; color: #1e2937; font-weight: bold;}
     .btn:hover {background: #eab308;}
-    #erro {color: #ef4444; margin-top: 10px;}
+    #erro {color: #ef4444;}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginBox">
     <h2>🔐 Painel Administrativo</h2>
     <p>1º Acampamento de Servos</p>
@@ -38,31 +36,27 @@
     <p id="erro"></p>
 </div>
 
-<!-- PAINEL -->
 <div id="painel">
     <h2>📋 Inscrições - Acampamento</h2>
-    
     <div class="topo">
         <input type="text" id="busca" placeholder="🔍 Busca geral...">
         <select id="filtroSexo"><option value="">Todos os sexos</option></select>
         <select id="filtroCidade"><option value="">Todas as cidades</option></select>
-        <button class="btn" onclick="limparFiltros()">🧹 Limpar Filtros</button>
+        <button class="btn" onclick="limparFiltros()">🧹 Limpar</button>
         <button class="btn" onclick="atualizar()">🔄 Atualizar Dados</button>
         <button class="btn" onclick="imprimir()">🖨 Gerar Relatório</button>
     </div>
-
     <table id="tabela"></table>
 </div>
 
 <script>
 const SENHA_CORRETA = "123";
-const URL = "https://script.google.com/macros/s/AKfycbwOff6Uw_mM_euRN_WimGgHRQ_GcHwM_vyglP_u6VseSZmV8HeGiLjXO7EtO67k0gkq/exec";  
-// ↑↑↑ Troque pelo NOVO LINK que você copiou na implantação
+// === COLE AQUI O NOVO LINK DA IMPLANTAÇÃO ===
+const URL = "https://script.google.com/macros/s/SEU_NOVO_LINK_AQUI/exec";
 
 let todosDados = [];
 let headers = [];
 
-// ==================== LOGIN ====================
 function login() {
     if (document.getElementById("senha").value === SENHA_CORRETA) {
         document.getElementById("loginBox").style.display = "none";
@@ -73,13 +67,12 @@ function login() {
     }
 }
 
-// ==================== CARREGAR DADOS ====================
 function carregarDados() {
     fetch(URL)
         .then(res => res.text())
         .then(texto => {
-            if (texto.includes("ERRO") || texto.trim() === "" || texto.includes("Planilha vazia")) {
-                alert("❌ Ainda sem dados ou erro na conexão.\n\nVerifique se já tem inscrições na planilha.");
+            if (texto.includes("ERRO") || texto.trim() === "" || texto.includes("vazia")) {
+                alert("Sem dados ou erro na conexão.\n\nConfira se já tem inscrições na planilha.");
                 return;
             }
             const linhas = texto.trim().split("\n");
@@ -88,25 +81,19 @@ function carregarDados() {
             popularFiltros();
             mostrarTabela(todosDados);
         })
-        .catch(err => {
-            alert("❌ Erro ao carregar dados do Google.\n\n1. Crie uma NOVA implantação\n2. Marque 'Qualquer pessoa'\n3. Use o novo link na variável URL");
-            console.error(err);
+        .catch(() => {
+            alert("Erro ao conectar.\n\n1. Crie NOVA implantação\n2. Marque 'Qualquer pessoa'\n3. Cole o novo link acima");
         });
 }
 
-// ==================== ATUALIZAR ====================
 function atualizar() { carregarDados(); }
 
-// ==================== POPULAR FILTROS ====================
 function popularFiltros() {
     if (todosDados.length < 2) return;
-
     const idxSexo = headers.findIndex(h => String(h).toLowerCase().includes("sexo"));
     const idxCidade = headers.findIndex(h => String(h).toLowerCase().includes("cidade"));
 
-    const setSexo = new Set();
-    const setCidade = new Set();
-
+    const setSexo = new Set(), setCidade = new Set();
     for (let i = 1; i < todosDados.length; i++) {
         if (idxSexo > -1 && todosDados[i][idxSexo]) setSexo.add(todosDados[i][idxSexo]);
         if (idxCidade > -1 && todosDados[i][idxCidade]) setCidade.add(todosDados[i][idxCidade]);
@@ -121,7 +108,6 @@ function popularFiltros() {
     setCidade.forEach(c => selCidade.innerHTML += `<option value="${c}">${c}</option>`);
 }
 
-// ==================== MOSTRAR TABELA ====================
 function mostrarTabela(dadosMostrar) {
     let html = "<tr>" + headers.map(h => `<th>${h}</th>`).join("") + "</tr>";
     for (let i = 1; i < dadosMostrar.length; i++) {
@@ -130,15 +116,11 @@ function mostrarTabela(dadosMostrar) {
     document.getElementById("tabela").innerHTML = html;
 }
 
-// ==================== FILTRO ====================
 function aplicarFiltro() {
     const busca = document.getElementById("busca").value.toLowerCase().trim();
     const filtrado = [todosDados[0]];
-
     for (let i = 1; i < todosDados.length; i++) {
-        if (todosDados[i].join(" ").toLowerCase().includes(busca)) {
-            filtrado.push(todosDados[i]);
-        }
+        if (todosDados[i].join(" ").toLowerCase().includes(busca)) filtrado.push(todosDados[i]);
     }
     mostrarTabela(filtrado);
 }
@@ -148,25 +130,13 @@ function limparFiltros() {
     aplicarFiltro();
 }
 
-// ==================== IMPRIMIR ====================
 function imprimir() {
-    const conteudo = document.getElementById("tabela").innerHTML;
-    const data = new Date().toLocaleDateString('pt-BR');
-    const win = window.open('', '', 'width=1200,height=800');
-    win.document.write(`
-        <html><head><title>Relatório de Inscrições</title>
-        <style>body{font-family:Arial;padding:40px;} h1{text-align:center;} table{width:100%;border-collapse:collapse;} th,td{border:1px solid #999;padding:8px;}</style>
-        </head><body>
-        <h1>Relatório de Inscrições - 1º Acampamento de Servos</h1>
-        <p style="text-align:center;">Gerado em: ${data}</p>
-        <table>${conteudo}</table>
-        </body></html>
-    `);
+    const win = window.open('');
+    win.document.write(`<html><head><title>Relatório</title></head><body>${document.getElementById("tabela").outerHTML}</body></html>`);
     win.document.close();
-    setTimeout(() => win.print(), 500);
+    win.print();
 }
 
-// Eventos em tempo real
 document.getElementById("busca").addEventListener("input", aplicarFiltro);
 </script>
 </body>
