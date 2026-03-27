@@ -2,199 +2,246 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Inscrição - Acampamento de Servos</title>
+<title>Painel</title>
 
 <style>
 body {
-  margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
-  color: #fff;
-}
-
-.container {
-  max-width: 1000px;
-  margin: auto;
-  padding: 30px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.header h1 {
-  color: #FFD700;
-}
-
-.box {
-  background: #141414;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  box-shadow: 0 0 15px rgba(255,215,0,0.1);
-}
-
-.box h3 {
-  color: #FFD700;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
-  gap: 10px;
-}
-
-input, textarea, select {
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
-  background: #1f1f1f;
+  font-family: Arial;
+  background: #111;
   color: white;
+  padding: 20px;
+}
+
+/* LOGIN */
+#loginBox {
+  max-width: 300px;
+  margin: auto;
+  margin-top: 100px;
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* PAINEL */
+#painel {
+  display: none;
+}
+
+input, select, button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
 }
 
 button {
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(45deg, #FFD700, #caa500);
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  background: #00c853;
+  color: white;
   cursor: pointer;
 }
 
-#sucesso {
-  display: none;
-  text-align: center;
-  margin-top: 100px;
+button:hover {
+  background: #00a844;
+}
+
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #444;
+  padding: 8px;
+}
+
+th {
+  background: #222;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<div class="container">
-
-<div class="header">
-<h1>🙏 1º Acampamento de Servos</h1>
-<p>Preencha sua ficha de inscrição</p>
+<!-- LOGIN -->
+<div id="loginBox">
+  <h2>Login</h2>
+  <input type="password" id="senha" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+  <p id="erro"></p>
 </div>
 
-<form id="form">
+<!-- PAINEL -->
+<div id="painel">
+  <h2>Painel de Cadastros</h2>
 
-<div class="box">
-<h3>📋 Dados Pessoais</h3>
-<div class="grid">
-<input name="nome" placeholder="Nome completo" required>
-<input name="endereco" placeholder="Endereço">
-<input name="numero" placeholder="Número">
-<input name="cidade" placeholder="Cidade">
-<input name="estado" placeholder="Estado">
-<input name="cpf" placeholder="CPF">
-<input name="rg" placeholder="RG">
-<input name="telefone" placeholder="Telefone">
-<input name="whatsapp" placeholder="WhatsApp? (sim/não)">
-<input name="nascimento" placeholder="Data de nascimento">
-<input name="idade" placeholder="Idade">
-<input name="peso" placeholder="Peso">
-<input name="altura" placeholder="Altura">
-<input name="familiar" placeholder="Nome familiar">
-<input name="tel_familiar" placeholder="Telefone familiar">
-<input name="vinculo" placeholder="Vínculo">
-<input name="estado_civil" placeholder="Estado civil">
-<input name="mora_com" placeholder="Mora com quem">
-</div>
-</div>
+  <div class="topo">
+    <input type="text" id="busca" placeholder="Busca geral...">
 
-<div class="box">
-<h3>⛺ Sobre o Acampamento</h3>
-<textarea name="acampamento" placeholder="Quais acampamentos já fez?" rows="3"></textarea>
-<textarea name="motivo" placeholder="Motivo para participar" rows="3"></textarea>
-</div>
+    <select id="sexo">
+      <option value="">Todos os sexos</option>
+    </select>
 
-<div class="box">
-<h3>🩺 Saúde</h3>
+    <select id="cidade">
+      <option value="">Todas cidades</option>
+    </select>
 
-<p>Pressão alta?</p>
-<select name="pressao"><option>Não</option><option>Sim</option></select>
-<input name="pressao_remedio" placeholder="Remédio">
+    <button onclick="limparFiltros()">🧹 Limpar</button>
+    <button onclick="atualizar()">🔄 Atualizar</button>
+    <button onclick="imprimir()">🖨 Relatório</button>
+  </div>
 
-<p>Diabetes?</p>
-<select name="diabetes"><option>Não</option><option>Sim</option></select>
-<input name="diabetes_remedio">
-
-<p>Problema cardíaco?</p>
-<select name="coracao"><option>Não</option><option>Sim</option></select>
-
-<p>Problema respiratório?</p>
-<select name="respiratorio"><option>Não</option><option>Sim</option></select>
-
-<p>Convulsões?</p>
-<select name="convulsao"><option>Não</option><option>Sim</option></select>
-
-<p>Ansiedade/depressão?</p>
-<select name="ansiedade"><option>Não</option><option>Sim</option></select>
-
-<p>Deficiência física?</p>
-<select name="deficiencia"><option>Não</option><option>Sim</option></select>
-
-<p>Gravidez?</p>
-<select name="gravidez"><option>Não</option><option>Sim</option></select>
-
-<p>Drogas ilícitas?</p>
-<select name="drogas"><option>Não</option><option>Sim</option></select>
-
-<p>Bebida alcoólica?</p>
-<select name="alcool"><option>Não</option><option>Sim</option></select>
-
-<p>Alergia?</p>
-<select name="alergia"><option>Não</option><option>Sim</option></select>
-
-<p>Cirurgia recente?</p>
-<select name="cirurgia"><option>Não</option><option>Sim</option></select>
-
-<p>Restrição médica?</p>
-<select name="restricao"><option>Não</option><option>Sim</option></select>
-
-<textarea name="observacoes" placeholder="Outras observações"></textarea>
-</div>
-
-<div class="box">
-<h3>📜 Termo</h3>
-<select name="aceite" required>
-<option value="">Aceita os termos?</option>
-<option>Sim</option>
-</select>
-</div>
-
-<button type="submit">✨ Inscrever-se</button>
-
-</form>
-
-<div id="sucesso">
-<h2>✨ Inscrição realizada!</h2>
-<p>Que Deus abençoe sua caminhada 🙏</p>
-</div>
-
+  <table id="tabela"></table>
 </div>
 
 <script>
-const form = document.getElementById('form');
+const SENHA = "123";
 
-form.addEventListener('submit', function(e){
-  e.preventDefault();
+const URL = "https://script.google.com/macros/s/AKfycbwOff6Uw_mM_euRN_WimGgHRQ_GcHwM_vyglP_u6VseSZmV8HeGiLjXO7EtO67k0gkq/exec";
 
-  const data = Object.fromEntries(new FormData(form));
+let dados = [];
 
-  fetch("https://script.google.com/macros/s/AKfycbwOff6Uw_mM_euRN_WimGgHRQ_GcHwM_vyglP_u6VseSZmV8HeGiLjXO7EtO67k0gkq/exec", {
-    method: "POST",
-    body: JSON.stringify(data)
-  })
-  .then(() => {
-    form.style.display = "none";
-    document.getElementById("sucesso").style.display = "block";
+// LOGIN
+function login() {
+  if (document.getElementById("senha").value === SENHA) {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("painel").style.display = "block";
+    carregar();
+  } else {
+    document.getElementById("erro").innerText = "Senha incorreta";
+  }
+}
+
+// CARREGAR DADOS
+function carregar() {
+  fetch(URL)
+    .then(res => res.text())
+    .then(texto => {
+      const linhas = texto.trim().split("\n");
+      dados = linhas.map(l => l.split("\t"));
+
+      popularCombos();
+      aplicarFiltro();
+    });
+}
+
+// ATUALIZAR (RECARREGA DO GOOGLE)
+function atualizar() {
+  carregar();
+}
+
+// LIMPAR FILTROS
+function limparFiltros() {
+  document.getElementById("busca").value = "";
+  document.getElementById("sexo").value = "";
+  document.getElementById("cidade").value = "";
+  aplicarFiltro();
+}
+
+// POPULAR COMBOS
+function popularCombos() {
+  let sexos = new Set();
+  let cidades = new Set();
+
+  dados.slice(1).forEach(linha => {
+    sexos.add(linha[3]);
+    cidades.add(linha[5]);
   });
-});
+
+  const selectSexo = document.getElementById("sexo");
+  const selectCidade = document.getElementById("cidade");
+
+  selectSexo.innerHTML = '<option value="">Todos os sexos</option>';
+  selectCidade.innerHTML = '<option value="">Todas cidades</option>';
+
+  sexos.forEach(s => {
+    if (s) selectSexo.innerHTML += `<option>${s}</option>`;
+  });
+
+  cidades.forEach(c => {
+    if (c) selectCidade.innerHTML += `<option>${c}</option>`;
+  });
+}
+
+// MOSTRAR
+function mostrar(lista) {
+  let html = "<tr>";
+  lista[0].forEach(col => html += `<th>${col}</th>`);
+  html += "</tr>";
+
+  for (let i = 1; i < lista.length; i++) {
+    html += "<tr>";
+    lista[i].forEach(c => html += `<td>${c}</td>`);
+    html += "</tr>";
+  }
+
+  document.getElementById("tabela").innerHTML = html;
+}
+
+// FILTRO AUTOMÁTICO
+function aplicarFiltro() {
+  const busca = document.getElementById("busca").value.toLowerCase();
+  const sexo = document.getElementById("sexo").value;
+  const cidade = document.getElementById("cidade").value;
+
+  let filtrado = dados.filter((linha, i) => {
+    if (i === 0) return true;
+
+    let textoLinha = linha.join(" ").toLowerCase();
+
+    return (
+      textoLinha.includes(busca) &&
+      (sexo === "" || linha[3] === sexo) &&
+      (cidade === "" || linha[5] === cidade)
+    );
+  });
+
+  mostrar(filtrado);
+}
+
+// EVENTOS AUTOMÁTICOS
+document.addEventListener("input", aplicarFiltro);
+document.addEventListener("change", aplicarFiltro);
+
+// RELATÓRIO
+function imprimir() {
+  let conteudo = document.getElementById("tabela").innerHTML;
+  let dataAtual = new Date().toLocaleDateString();
+
+  let win = window.open('', '', 'width=900,height=700');
+
+  win.document.write(`
+    <html>
+    <head>
+      <title>Relatório</title>
+      <style>
+        body { font-family: Arial; padding: 30px; }
+        h1 { text-align: center; }
+        .data { text-align: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #333; color: #fff; padding: 10px; }
+        td { border: 1px solid #ccc; padding: 8px; }
+        tr:nth-child(even) { background: #f2f2f2; }
+      </style>
+    </head>
+    <body>
+      <h1>Relatório de Cadastros</h1>
+      <div class="data">Gerado em: ${dataAtual}</div>
+      <table>${conteudo}</table>
+    </body>
+    </html>
+  `);
+
+  win.document.close();
+  win.print();
+}
 </script>
 
 </body>
