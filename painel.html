@@ -2,114 +2,185 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Painel de Inscrições - Acampamento</title>
+<title>Painel de Cadastros - 1º Acampamento de Servos</title>
 <style>
-    body {font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #e2e8f0; padding: 20px; margin: 0;}
-    h2 {color: #facc15;}
-    #loginBox {max-width: 360px; margin: 120px auto; background: #1e2937; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.6);}
-    input[type="password"] {width: 100%; padding: 14px; margin: 15px 0; border-radius: 8px; border: none; background: #334155; color: white; font-size: 16px;}
-    button {padding: 14px 30px; margin: 10px 5px; border-radius: 8px; border: none; cursor: pointer; font-size: 16px;}
-    #btnEntrar {background: #facc15; color: #1e2937; font-weight: bold;}
-    #painel {display: none;}
-    .topo {display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center;}
-    input[type="text"], select {padding: 12px; border-radius: 8px; border: none; background: #334155; color: white;}
-    table {width: 100%; border-collapse: collapse; background: #1e2937;}
-    th, td {border: 1px solid #475569; padding: 10px 8px; text-align: left;}
-    th {background: #334155; color: #facc15; position: sticky; top: 0;}
-    tr:nth-child(even) {background: #26334a;}
-    .btn {background: #facc15; color: #1e2937; font-weight: bold;}
-    .btn:hover {background: #eab308;}
+    body {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        background: #0a0a0a;
+        color: #e2e8f0;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        color: #facc15;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    .topo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+        justify-content: center;
+        align-items: center;
+    }
+    input[type="text"], select {
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: none;
+        background: #1f1f1f;
+        color: white;
+        font-size: 1rem;
+        min-width: 200px;
+    }
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+    .btn-limpar { background: #4b5563; color: white; }
+    .btn-atualizar { background: #22c55e; color: black; }
+    .btn-relatorio { background: #eab308; color: black; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #1a1a1a;
+        margin-top: 10px;
+    }
+    th, td {
+        border: 1px solid #444;
+        padding: 12px 10px;
+        text-align: left;
+    }
+    th {
+        background: #2a2a2a;
+        color: #facc15;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    tr:nth-child(even) { background: #222; }
+    tr:hover { background: #333; }
 </style>
 </head>
 <body>
 
-<div id="loginBox">
-    <h2>🔐 Painel Administrativo</h2>
-    <p>1º Acampamento de Servos</p>
-    <input type="password" id="senha" placeholder="Digite a senha">
-    <br>
-    <button id="btnEntrar" onclick="login()">Entrar</button>
-    <p id="erro" style="color:#ef4444;"></p>
+<h1>Painel de Cadastros - 1º Acampamento de Servos</h1>
+
+<div class="topo">
+    <input type="text" id="busca" placeholder="🔍 Busca geral...">
+    <select id="filtroSexo">
+        <option value="">Todos os sexos</option>
+    </select>
+    <select id="filtroCidade">
+        <option value="">Todas as cidades</option>
+    </select>
+    <button class="btn-limpar" onclick="limparFiltros()">🧹 Limpar</button>
+    <button class="btn-atualizar" onclick="atualizar()">🔄 Atualizar</button>
+    <button class="btn-relatorio" onclick="imprimir()">🖨 Relatório</button>
 </div>
 
-<div id="painel">
-    <h2>📋 Inscrições - Acampamento</h2>
-    <div class="topo">
-        <input type="text" id="busca" placeholder="🔍 Busca geral...">
-        <select id="filtroSexo"><option value="">Todos os sexos</option></select>
-        <select id="filtroCidade"><option value="">Todas as cidades</option></select>
-        <button class="btn" onclick="limparFiltros()">🧹 Limpar</button>
-        <button class="btn" onclick="atualizar()">🔄 Atualizar Dados</button>
-        <button class="btn" onclick="imprimir()">🖨 Gerar Relatório</button>
-    </div>
-    <table id="tabela"></table>
-</div>
+<table id="tabela"></table>
 
 <script>
-const SENHA_CORRETA = "123";
-const URL = "https://script.google.com/macros/s/AKfycbwOff6Uw_mM_euRN_WimGgHRQ_GcHwM_vyglP_u6VseSZmV8HeGiLjXO7EtO67k0gkq/exec";  
-// ↑↑↑ COLE AQUI O NOVO LINK DA IMPLANTAÇÃO (o que você copiou agora)
+const URL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";  
+// ← Cole aqui seu link atualizado da implantação, se necessário
 
 let todosDados = [];
 let headers = [];
 
-function login() {
-    if (document.getElementById("senha").value === SENHA_CORRETA) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("painel").style.display = "block";
-        carregarDados();
-    } else {
-        document.getElementById("erro").innerText = "Senha incorreta!";
-    }
-}
-
+// Carregar dados da planilha
 function carregarDados() {
     fetch(URL)
         .then(res => res.text())
         .then(texto => {
-            if (texto.trim() === "" || texto.includes("ERRO")) {
-                alert("Sem dados ou erro na conexão.\n\nConfira se tem inscrições na planilha.");
+            if (!texto || texto.trim() === "") {
+                alert("Nenhum dado encontrado na planilha.");
                 return;
             }
+
             const linhas = texto.trim().split("\n");
             todosDados = linhas.map(l => l.split("\t"));
             headers = todosDados[0] || [];
+
             popularFiltros();
             mostrarTabela(todosDados);
         })
-        .catch(() => alert("Erro ao conectar ao Google. Verifique a implantação e o link."));
+        .catch(() => {
+            alert("Erro ao carregar os dados.\nVerifique se a implantação está como 'Qualquer pessoa'.");
+        });
 }
 
-function atualizar() { carregarDados(); }
+function atualizar() {
+    carregarDados();
+}
 
+// Popular filtros (Sexo e Cidade) de forma inteligente
 function popularFiltros() {
-    if (todosDados.length < 2) return;
+    // Filtro de Sexo
     const idxSexo = headers.findIndex(h => String(h).toLowerCase().includes("sexo"));
-    const idxCidade = headers.findIndex(h => String(h).toLowerCase().includes("cidade"));
+    const selSexo = document.getElementById("filtroSexo");
+    selSexo.innerHTML = '<option value="">Todos os sexos</option>';
 
-    const setSexo = new Set(), setCidade = new Set();
-    for (let i = 1; i < todosDados.length; i++) {
-        if (idxSexo !== -1 && todosDados[i][idxSexo]) setSexo.add(todosDados[i][idxSexo]);
-        if (idxCidade !== -1 && todosDados[i][idxCidade]) setCidade.add(todosDados[i][idxCidade]);
+    if (idxSexo !== -1) {
+        const sexos = new Set();
+        for (let i = 1; i < todosDados.length; i++) {
+            const valor = todosDados[i][idxSexo];
+            if (valor && valor.trim() !== "") sexos.add(valor.trim());
+        }
+        sexos.forEach(s => {
+            selSexo.innerHTML += `<option value="${s}">${s}</option>`;
+        });
     }
 
-    document.getElementById("filtroSexo").innerHTML = '<option value="">Todos os sexos</option>' + Array.from(setSexo).map(s => `<option value="${s}">${s}</option>`).join('');
-    document.getElementById("filtroCidade").innerHTML = '<option value="">Todas as cidades</option>' + Array.from(setCidade).map(c => `<option value="${c}">${c}</option>`).join('');
+    // Filtro de Cidade
+    const idxCidade = headers.findIndex(h => String(h).toLowerCase().includes("cidade"));
+    const selCidade = document.getElementById("filtroCidade");
+    selCidade.innerHTML = '<option value="">Todas as cidades</option>';
+
+    if (idxCidade !== -1) {
+        const cidades = new Set();
+        for (let i = 1; i < todosDados.length; i++) {
+            const valor = todosDados[i][idxCidade];
+            if (valor && valor.trim() !== "") cidades.add(valor.trim());
+        }
+        cidades.forEach(c => {
+            selCidade.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+    }
 }
 
+// Mostrar tabela completa
 function mostrarTabela(dadosMostrar) {
-    let html = "<tr>" + headers.map(h => `<th>${h}</th>`).join('') + "</tr>";
+    let html = "<tr>";
+    headers.forEach(col => {
+        html += `<th>${col}</th>`;
+    });
+    html += "</tr>";
+
     for (let i = 1; i < dadosMostrar.length; i++) {
-        html += "<tr>" + dadosMostrar[i].map(c => `<td>${c || ''}</td>`).join('') + "</tr>";
+        html += "<tr>";
+        dadosMostrar[i].forEach(cel => {
+            html += `<td>${cel || ''}</td>`;
+        });
+        html += "</tr>";
     }
     document.getElementById("tabela").innerHTML = html;
 }
 
+// Filtro de busca
 function aplicarFiltro() {
     const busca = document.getElementById("busca").value.toLowerCase().trim();
     const filtrado = [todosDados[0]];
+
     for (let i = 1; i < todosDados.length; i++) {
-        if (todosDados[i].join(" ").toLowerCase().includes(busca)) filtrado.push(todosDados[i]);
+        if (todosDados[i].join(" ").toLowerCase().includes(busca)) {
+            filtrado.push(todosDados[i]);
+        }
     }
     mostrarTabela(filtrado);
 }
@@ -120,13 +191,30 @@ function limparFiltros() {
 }
 
 function imprimir() {
-    const win = window.open('');
-    win.document.write(document.getElementById("tabela").outerHTML);
+    const win = window.open('', '', 'width=1200,height=800');
+    win.document.write(`
+        <html><head><title>Relatório de Inscrições</title>
+        <style>
+            body {font-family:Arial;padding:30px;}
+            h1 {text-align:center; color:#333;}
+            table {width:100%; border-collapse:collapse;}
+            th, td {border:1px solid #999; padding:8px; text-align:left;}
+            th {background:#333; color:white;}
+        </style>
+        </head><body>
+        <h1>Relatório de Inscrições - 1º Acampamento de Servos</h1>
+        <table>${document.getElementById("tabela").innerHTML}</table>
+        </body></html>
+    `);
     win.document.close();
     win.print();
 }
 
+// Eventos
 document.getElementById("busca").addEventListener("input", aplicarFiltro);
+
+// Carregar dados ao abrir a página
+window.onload = carregarDados;
 </script>
 </body>
 </html>
