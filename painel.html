@@ -12,123 +12,70 @@
             --border: #334155;
         }
 
-        /* Tela de Login */
+        /* Login */
         #login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-dark);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 2000;
         }
-
         #conteudo-principal { display: none; }
 
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--bg-dark);
             color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            font-size: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
+            margin: 0; padding: 20px;
         }
 
         .topo {
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 15px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
+            padding: 20px; border-radius: 15px;
+            display: flex; flex-wrap: wrap; gap: 10px;
+            margin-bottom: 20px; justify-content: center;
             border: 1px solid var(--border);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
         input, select {
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #0f172a;
-            color: white;
-            font-size: 0.9rem;
-            outline: none;
+            padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+            background: #0f172a; color: white;
         }
-
-        input:focus { border-color: var(--primary); }
 
         button {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding: 10px 20px; border-radius: 8px; border: none;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
         }
-
         .btn-limpar { background: #475569; color: white; }
         .btn-atualizar { background: #10b981; color: white; }
         .btn-relatorio { background: var(--primary); color: #0f172a; }
-        button:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-ficha { background: #6366f1; color: white; padding: 5px 10px; font-size: 0.7rem; }
 
-        /* Estilo da Tabela */
-        .tabela-wrapper {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .scroll-container { overflow-x: auto; }
-
-        table {
+        /* Tabela no Painel */
+        .tabela-container {
             width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
+            overflow-x: auto; /* Scroll apenas na tela */
+            background: var(--card-bg);
+            border-radius: 12px;
         }
 
-        th {
-            background: #111827;
-            color: var(--primary);
-            padding: 15px;
-            text-align: left;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            border-bottom: 2px solid var(--border);
-        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { background: #111827; color: var(--primary); padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid var(--border); }
 
-        td {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border);
-            white-space: nowrap;
-        }
-
-        tr:nth-child(even) { background: #242f3d; }
-        tr:hover { background: #2d3a4d; }
-
-        /* Estilo para Impressão */
+        /* AJUSTE PARA IMPRESSÃO DO RELATÓRIO GERAL */
         @media print {
-            body { background: white; color: black; padding: 0; }
+            body { background: white !important; color: black !important; }
             .topo, #login-screen { display: none !important; }
-            .tabela-wrapper { border: none; box-shadow: none; }
-            th { background: #eee !important; color: black !important; border: 1px solid #ddd; }
-            td { border: 1px solid #ddd; font-size: 10px; }
-            h1 { color: black; font-size: 1.5rem; }
+            .tabela-container { overflow: visible !important; } /* Remove o scroll na impressão */
+            table { width: 100% !important; border: 1px solid #000; table-layout: auto !important; }
+            th, td { 
+                border: 1px solid #000 !important; 
+                white-space: normal !important; /* Faz o texto quebrar linha em vez de esticar */
+                word-wrap: break-word;
+                color: black !important;
+            }
+            .btn-ficha { display: none !important; } /* Esconde botão de ficha no relatório geral */
         }
     </style>
 </head>
@@ -136,128 +83,91 @@
 
 <div id="login-screen">
     <h1>Acesso Restrito</h1>
-    <input type="password" id="senhaInput" placeholder="Digite a senha (123)...">
-    <button class="btn-relatorio" style="margin-top:15px" onclick="verificarSenha()">Entrar no Sistema</button>
+    <input type="password" id="senhaInput" placeholder="Senha...">
+    <button class="btn-relatorio" onclick="verificarSenha()" style="margin-top:10px">Entrar</button>
 </div>
 
 <div id="conteudo-principal">
-    <h1>Relatório de Inscrições - 1º Acampamento</h1>
+    <h1 style="text-align:center; color:var(--primary)">📋 Painel de Inscrições</h1>
 
     <div class="topo">
-        <input type="text" id="busca" placeholder="🔍 Buscar participante...">
-        <select id="filtroSexo" onchange="aplicarFiltro()"><option value="">Todos os Sexos</option></select>
-        <select id="filtroCidade" onchange="aplicarFiltro()"><option value="">Todas as Cidades</option></select>
-        <button class="btn-limpar" onclick="limparFiltros()">🧹 Limpar</button>
-        <button class="btn-atualizar" onclick="carregarDados()">🔄 Atualizar</button>
-        <button class="btn-relatorio" onclick="window.print()">🖨 Gerar PDF / Imprimir</button>
+        <input type="text" id="busca" placeholder="🔍 Buscar...">
+        <select id="filtroSexo" onchange="aplicarFiltro()"><option value="">Sexo</option></select>
+        <button class="btn-limpar" onclick="limparFiltros()">Limpar</button>
+        <button class="btn-atualizar" onclick="carregarDados()">Atualizar</button>
+        <button class="btn-relatorio" onclick="window.print()">Imprimir Relatório Geral</button>
     </div>
 
-    <div class="tabela-wrapper">
-        <div class="scroll-container">
-            <table id="tabela"></table>
-        </div>
+    <div class="tabela-container">
+        <table id="tabela"></table>
     </div>
 </div>
 
 <script>
 const URL = "https://script.google.com/macros/s/AKfycbyoYf4jnMG1-TCVK4ynfzwSBnBXQpJTlRvJL7GKDnjsWkQVGiPzCqTzdmlTD2PHXCqy/exec";
-const SENHA_CORRETA = "123";
 let todosDados = [];
 let headers = [];
 
 function verificarSenha() {
-    if (document.getElementById("senhaInput").value === SENHA_CORRETA) {
+    if (document.getElementById("senhaInput").value === "123") {
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("conteudo-principal").style.display = "block";
         carregarDados();
     } else { alert("Senha incorreta!"); }
 }
 
-// FUNÇÃO MÁGICA: Corrige as datas longas do Google
+// Formatação de data dd/mm/aaaa
 function formatarData(texto) {
     if (!texto) return "";
     const str = String(texto);
-    
-    // Se parecer uma data longa (contém nomes de meses em inglês ou GMT)
     if (str.includes("GMT") || str.length > 20) {
-        const dataObj = new Date(str);
-        if (!isNaN(dataObj)) {
-            const dia = String(dataObj.getDate()).padStart(2, '0');
-            const mes = String(dataObj.getMonth() + 1).padStart(2, '0');
-            const ano = dataObj.getFullYear();
-            return `${dia}/${mes}/${ano}`;
-        }
+        const d = new Date(str);
+        if (!isNaN(d)) return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
     }
-    return str; // Se não for data, retorna o texto original
+    return str;
 }
 
 function carregarDados() {
-    fetch(URL)
-        .then(res => res.text())
-        .then(texto => {
-            const linhas = texto.trim().split("\n");
-            todosDados = linhas.map(l => l.split("\t"));
-            headers = todosDados[0];
-            popularFiltros();
-            mostrarTabela(todosDados);
-        });
+    fetch(URL).then(res => res.text()).then(texto => {
+        const linhas = texto.trim().split("\n");
+        todosDados = linhas.map(l => l.split("\t"));
+        headers = todosDados[0];
+        popularFiltros();
+        mostrarTabela(todosDados);
+    });
 }
 
 function popularFiltros() {
     const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
-    const idxCidade = headers.findIndex(h => h.toLowerCase() === "cidade");
-    
     const sexos = new Set();
-    const cidades = new Set();
-
-    for (let i = 1; i < todosDados.length; i++) {
-        if(todosDados[i][idxSexo]) sexos.add(todosDados[i][idxSexo].trim());
-        if(todosDados[i][idxCidade]) cidades.add(todosDados[i][idxCidade].trim());
-    }
-
-    const selSexo = document.getElementById("filtroSexo");
-    const selCidade = document.getElementById("filtroCidade");
-    
-    selSexo.innerHTML = '<option value="">Todos os Sexos</option>';
-    sexos.forEach(s => selSexo.innerHTML += `<option value="${s}">${s}</option>`);
-    
-    selCidade.innerHTML = '<option value="">Todas as Cidades</option>';
-    cidades.forEach(c => selCidade.innerHTML += `<option value="${c}">${c}</option>`);
+    for (let i = 1; i < todosDados.length; i++) if(todosDados[i][idxSexo]) sexos.add(todosDados[i][idxSexo].trim());
+    const sel = document.getElementById("filtroSexo");
+    sel.innerHTML = '<option value="">Todos os Sexos</option>';
+    sexos.forEach(s => sel.innerHTML += `<option value="${s}">${s}</option>`);
 }
 
 function mostrarTabela(dados) {
-    let html = "<thead><tr>";
-    headers.forEach(h => html += `<th>${h}</th>`);
+    let html = "<thead><tr><th>AÇÕES</th>";
+    headers.forEach(h => html += `<th>${h.toUpperCase()}</th>`);
     html += "</tr></thead><tbody>";
 
     for (let i = 1; i < dados.length; i++) {
-        html += "<tr>";
-        dados[i].forEach((celula, idx) => {
-            // Aplica a formatação de data em todas as colunas para garantir
-            html += `<td>${formatarData(celula)}</td>`;
-        });
+        html += `<tr><td><button class="btn-ficha" onclick="gerarFicha(${i})">FICHA</button></td>`;
+        dados[i].forEach(cel => html += `<td>${formatarData(cel)}</td>`);
         html += "</tr>";
     }
-    html += "</tbody>";
-    document.getElementById("tabela").innerHTML = html;
+    document.getElementById("tabela").innerHTML = html + "</tbody>";
 }
 
 function aplicarFiltro() {
     const busca = document.getElementById("busca").value.toLowerCase();
     const sexo = document.getElementById("filtroSexo").value;
-    const cidade = document.getElementById("filtroCidade").value;
-    
     const idxSexo = headers.findIndex(h => h.toLowerCase() === "sexo");
-    const idxCidade = headers.findIndex(h => h.toLowerCase() === "cidade");
-
     const filtrado = [headers];
     for (let i = 1; i < todosDados.length; i++) {
-        const linha = todosDados[i];
-        const bateBusca = linha.join(" ").toLowerCase().includes(busca);
-        const bateSexo = !sexo || linha[idxSexo] === sexo;
-        const bateCidade = !cidade || linha[idxCidade] === cidade;
-
-        if (bateBusca && bateSexo && bateCidade) filtrado.push(linha);
+        const bateBusca = todosDados[i].join(" ").toLowerCase().includes(busca);
+        const bateSexo = !sexo || todosDados[i][idxSexo] === sexo;
+        if (bateBusca && bateSexo) filtrado.push(todosDados[i]);
     }
     mostrarTabela(filtrado);
 }
@@ -265,13 +175,58 @@ function aplicarFiltro() {
 function limparFiltros() {
     document.getElementById("busca").value = "";
     document.getElementById("filtroSexo").value = "";
-    document.getElementById("filtroCidade").value = "";
     mostrarTabela(todosDados);
 }
 
-document.getElementById("busca").addEventListener("input", aplicarFiltro);
-document.getElementById("senhaInput").addEventListener("keypress", (e) => { if(e.key === "Enter") verificarSenha(); });
-</script>
+// FUNÇÃO DA FICHA INDIVIDUAL
+function gerarFicha(index) {
+    const campista = todosDados[index];
+    const win = window.open('', '', 'width=900,height=1000');
+    
+    let conteudoFicha = `
+        <html><head><title>Ficha de Inscrição</title>
+        <style>
+            body { font-family: sans-serif; padding: 40px; color: #333; }
+            .header { text-align: center; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
+            .secao { background: #f0f0f0; padding: 8px; font-weight: bold; margin-top: 20px; border: 1px solid #ccc; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+            .campo { border-bottom: 1px solid #eee; padding: 5px; font-size: 14px; }
+            .label { font-weight: bold; color: #555; font-size: 12px; text-transform: uppercase; }
+            .valor { font-size: 15px; color: #000; }
+            .footer { margin-top: 50px; text-align: center; border-top: 1px solid #000; padding-top: 20px; }
+        </style></head>
+        <body>
+            <div class="header">
+                <h2>1º ACAMPAMENTO DE SERVOS</h2>
+                <p>FICHA INDIVIDUAL DE INSCRIÇÃO</p>
+            </div>
+            <div class="secao">DADOS PESSOAIS</div>
+            <div class="grid">
+    `;
 
+    headers.forEach((h, i) => {
+        conteudoFicha += `
+            <div class="campo">
+                <div class="label">${h}</div>
+                <div class="valor">${formatarData(campista[i]) || '---'}</div>
+            </div>`;
+    });
+
+    conteudoFicha += `
+            </div>
+            <div class="footer">
+                <p>___________________________________________________</p>
+                <p>Assinatura do Responsável / Campista</p>
+            </div>
+        </body></html>
+    `;
+
+    win.document.write(conteudoFicha);
+    win.document.close();
+    setTimeout(() => { win.print(); }, 500);
+}
+
+document.getElementById("busca").addEventListener("input", aplicarFiltro);
+</script>
 </body>
 </html>
