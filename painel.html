@@ -24,8 +24,27 @@
             background: #0a0a0a;
             color: #e2e8f0;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             font-size: 16px;
+            overflow: hidden;
+        }
+        #conteudo-principal {
+            display: none;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .header-fixo {
+            background: #0a0a0a;
+            padding: 20px 20px 15px 20px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        .area-rolavel {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0 20px 20px 20px;
+            min-height: 0;
         }
         h1 {
             color: #facc15;
@@ -37,7 +56,6 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 25px;
             justify-content: center;
             align-items: center;
         }
@@ -65,7 +83,138 @@
         .btn-relatorio { background: #eab308; color: black; }
         .btn-login { background: #facc15; color: black; margin-top: 10px; }
 
-        .tabela-container { overflow-x: auto; }
+        .tabela-container { overflow-x: auto; padding-top: 10px; }
+        
+        .total-cadastros {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        /* Layout visual de fichas/cards */
+        .fichas-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 10px;
+        }
+        
+        .ficha-card {
+            background: #1a1a1a;
+            border: 2px solid #2563eb;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ficha-header {
+            background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ficha-header h3 {
+            margin: 0;
+            font-size: 1.3em;
+            color: white;
+        }
+        
+        .btn-ficha-card {
+            background: #facc15;
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-ficha-card:hover {
+            opacity: 0.9;
+        }
+        
+        .ficha-secao {
+            padding: 15px 20px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .ficha-secao:last-child {
+            border-bottom: none;
+        }
+        
+        .ficha-secao-titulo {
+            color: #2563eb;
+            font-size: 1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #2563eb;
+        }
+        
+        .ficha-campos {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .ficha-campo {
+            display: flex;
+            align-items: baseline;
+            font-size: 0.95em;
+        }
+        
+        .ficha-campo-row {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .ficha-campo-inline {
+            display: flex;
+            align-items: baseline;
+            font-size: 0.95em;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .ficha-label {
+            color: #94a3b8;
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+        
+        .ficha-valor {
+            color: #e2e8f0;
+        }
+        
+        .ficha-saude-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .ficha-saude-item {
+            background: #0f172a;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #2563eb;
+            font-size: 0.9em;
+        }
+        
+        .ficha-saude-label {
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        
+        .ficha-saude-valor {
+            color: #e2e8f0;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -77,7 +226,7 @@
             padding: 14px 12px;
             text-align: left;
             white-space: nowrap;
-            font-size: 14px;
+            font-size: 16px;
         }
         th {
             background: #2a2a2a;
@@ -85,8 +234,16 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            font-size: 15px;
+            font-size: 17px;
             font-weight: bold;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        td {
+            white-space: normal;
+            word-break: break-word;
+            max-width: 200px;
         }
         tr:nth-child(even) { background: #222; }
         tr:hover { background: #333; }
@@ -101,23 +258,32 @@
 </div>
 
 <div id="conteudo-principal">
-    <h1>Painel de Cadastros - 1º Acampamento de Servos</h1>
+    <div class="header-fixo">
+        <h1>Painel de Cadastros - 1º Acampamento de Servos</h1>
 
-    <div class="topo">
-        <input type="text" id="busca" placeholder=" Busca geral...">
-        <select id="filtroSexo" onchange="aplicarFiltro()">
-            <option value="">Todos os sexos</option>
-        </select>
-        <select id="filtroCidade" onchange="aplicarFiltro()">
-            <option value="">Todas as cidades</option>
-        </select>
-        <button class="btn-limpar" onclick="limparFiltros()"> Limpar</button>
-        <button class="btn-atualizar" onclick="carregarDados()"> Atualizar</button>
-        <button class="btn-relatorio" onclick="imprimir()"> Relatório</button>
+        <div class="topo">
+            <input type="text" id="busca" placeholder=" Busca geral...">
+            <select id="filtroSexo" onchange="aplicarFiltro()">
+                <option value="">Todos os sexos</option>
+            </select>
+            <select id="filtroCidade" onchange="aplicarFiltro()">
+                <option value="">Todas as cidades</option>
+            </select>
+            <select id="filtroDataCadastro" onchange="aplicarFiltro()">
+                <option value="">CADASTROS</option>
+            </select>
+            <button class="btn-limpar" onclick="limparFiltros()"> Limpar</button>
+            <button class="btn-atualizar" onclick="carregarDados()"> Atualizar</button>
+            <button class="btn-ficha" onclick="imprimirTodasFichas()" style="background: #3b82f6; color: white;"> Imprimir Fichas</button>
+            <button class="btn-relatorio" onclick="imprimir()"> Relatório</button>
+            <span id="totalCadastros" class="total-cadastros"></span>
+        </div>
     </div>
 
-    <div class="tabela-container">
-        <table id="tabela"></table>
+    <div class="area-rolavel">
+        <div class="tabela-container">
+            <table id="tabela"></table>
+        </div>
     </div>
 </div>
 
@@ -134,7 +300,7 @@ function verificarSenha() {
     const senhaDigitada = document.getElementById("senhaInput").value;
     if (senhaDigitada === SENHA_CORRETA) {
         document.getElementById("login-screen").style.display = "none";
-        document.getElementById("conteudo-principal").style.display = "block";
+        document.getElementById("conteudo-principal").style.display = "flex";
         carregarDados(); // Carrega os dados só após o login
     } else {
         alert("Senha incorreta!");
@@ -162,6 +328,9 @@ function carregarDados() {
 
             popularFiltros();
             mostrarTabela(todosDados);
+            
+            // Verificar se há novas colunas com dados a cada 30 segundos
+            verificarNovasColunas();
         })
         .catch(err => {
             console.error(err);
@@ -169,21 +338,48 @@ function carregarDados() {
         });
 }
 
-// Popular filtros de Sexo e Cidade
+// Verificar se há novas colunas com dados (a cada 30 segundos)
+function verificarNovasColunas() {
+    fetch(URL)
+        .then(res => res.text())
+        .then(texto => {
+            if (!texto || texto.trim() === "") return;
+            
+            const linhas = texto.trim().split("\n");
+            const novosDados = linhas.map(l => l.split("\t"));
+            const novosHeaders = novosDados[0] || [];
+            
+            // Verificar se há novas colunas
+            if (novosHeaders.length > headers.length) {
+                headers = novosHeaders;
+                todosDados = novosDados;
+                popularFiltros();
+                mostrarTabela(todosDados);
+                console.log("Novas colunas detectadas e atualizadas!");
+            }
+        })
+        .catch(err => console.error("Erro ao verificar novas colunas:", err));
+}
+
+// Popular filtros de Sexo, Cidade e Data do Cadastro
 function popularFiltros() {
     // Encontrar índice exato da coluna "Sexo" (evitando conflito com telefone)
     const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
     const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
+    const idxDataCadastro = headers.findIndex(h => h.trim().toLowerCase().includes("data cadastro") || h.trim().toLowerCase().includes("data_cadastro") || h.trim().toLowerCase().includes("timestamp"));
 
     const selSexo = document.getElementById("filtroSexo");
     const selCidade = document.getElementById("filtroCidade");
+    const selDataCadastro = document.getElementById("filtroDataCadastro");
 
     // Limpa e reseta
     selSexo.innerHTML = '<option value="">Todos os sexos</option>';
     selCidade.innerHTML = '<option value="">Todas as cidades</option>';
+    selDataCadastro.innerHTML = '<option value="">CADASTROS</option>';
 
     const sexos = new Set();
     const cidades = new Set();
+    const datasCadastro = new Set();
 
     for (let i = 1; i < todosDados.length; i++) {
         if (idxSexo !== -1) {
@@ -194,29 +390,191 @@ function popularFiltros() {
             let c = todosDados[i][idxCidade];
             if (c && c.trim() !== "") cidades.add(c.trim());
         }
+        if (idxDataCadastro !== -1) {
+            let d = todosDados[i][idxDataCadastro];
+            if (d && d.trim() !== "") {
+                // Extrair data no formato dd/mm/aaaa
+                let dataFormatada = extrairDataFormatada(d);
+                if (dataFormatada) datasCadastro.add(dataFormatada);
+            }
+        }
     }
 
     sexos.forEach(s => selSexo.innerHTML += `<option value="${s}">${s}</option>`);
     cidades.forEach(c => selCidade.innerHTML += `<option value="${c}">${c}</option>`);
+
+    // Ordenar datas e adicionar ao select
+    const datasOrdenadas = Array.from(datasCadastro).sort((a, b) => {
+        const [diaA, mesA, anoA] = a.split('/').map(Number);
+        const [diaB, mesB, anoB] = b.split('/').map(Number);
+        if (anoA !== anoB) return anoA - anoB;
+        if (mesA !== mesB) return mesA - mesB;
+        return diaA - diaB;
+    });
+    datasOrdenadas.forEach(d => {
+        selDataCadastro.innerHTML += `<option value="${d}">${d}</option>`;
+    });
+
+    // Atualizar contador total
+    atualizarContador(todosDados.length - 1);
 }
 
-// Mostrar tabela
+// Atualizar contador de cadastros
+function atualizarContador(total) {
+    const spanContador = document.getElementById("totalCadastros");
+    if (spanContador) {
+        spanContador.textContent = total > 0 ? `(${total} cadastrados)` : "";
+    }
+}
+
+// Função para extrair data formatada em dd/mm/aaaa
+function extrairDataFormatada(dataStr) {
+    if (!dataStr || dataStr.trim() === "") return null;
+    
+    dataStr = dataStr.trim();
+    
+    // Se já está no formato dd/mm/aaaa
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(dataStr)) {
+        return dataStr;
+    }
+    
+    // Se está no formato yyyy-mm-dd
+    if (/^\d{4}-\d{2}-\d{2}/.test(dataStr)) {
+        const partes = dataStr.split('-');
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+    
+    // Se é formato tipo "Fri Mar 27 2026" ou "Fri Mar 27 2026 16:28:26"
+    const partes = dataStr.split(' ');
+    if (partes.length >= 4) {
+        const meses = {
+            'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
+            'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+        };
+        const mes = meses[partes[1].toLowerCase()];
+        const dia = partes[2];
+        const ano = partes[3];
+        if (mes && dia && ano) {
+            return `${dia.padStart(2, '0')}/${mes}/${ano}`;
+        }
+    }
+    
+    return null;
+}
+
+// Mostrar registros em layout de ficha visual
 function mostrarTabela(dadosMostrar) {
     if (dadosMostrar.length === 0) {
-        document.getElementById("tabela").innerHTML = "<tr><td>Nenhum resultado encontrado.</td></tr>";
+        document.getElementById("tabela").innerHTML = "<div style='text-align:center; padding:20px;'>Nenhum resultado encontrado.</div>";
         return;
     }
 
-    let html = "<tr>";
-    headers.forEach(col => html += `<th>${col}</th>`);
-    html += "</tr>";
+    const idxNascimento = headers.findIndex(h => h.trim().toLowerCase() === "nascimento");
+    const idxTimestamp = headers.findIndex(h => h.trim().toLowerCase() === "timestamp");
+    const idxNome = headers.findIndex(h => h.trim().toLowerCase() === "nome");
+
+    let html = '<div class="fichas-container">';
 
     for (let i = 1; i < dadosMostrar.length; i++) {
-        html += "<tr>";
-        dadosMostrar[i].forEach(cel => html += `<td>${cel || ''}</td>`);
-        html += "</tr>";
+        const dados = dadosMostrar[i];
+        const fichaDados = {};
+        headers.forEach((header, idx) => {
+            fichaDados[header] = dados[idx] || '';
+        });
+
+        // Formatar data de nascimento
+        let nascimentoFormatado = fichaDados['NASCIMENTO'] || '';
+        if (nascimentoFormatado) {
+            try {
+                const data = new Date(nascimentoFormatado);
+                if (!isNaN(data)) {
+                    const dia = String(data.getDate()).padStart(2, '0');
+                    const mes = String(data.getMonth() + 1).padStart(2, '0');
+                    const ano = data.getFullYear();
+                    nascimentoFormatado = `${dia}/${mes}/${ano}`;
+                }
+            } catch (e) {}
+        }
+
+        html += `
+            <div class="ficha-card">
+                <div class="ficha-header">
+                    <h3>${fichaDados['NOME'] || 'Sem Nome'}</h3>
+                    <button class="btn-ficha-card" onclick="imprimirFicha(${i})">FICHA</button>
+                </div>
+                
+                <div class="ficha-secao">
+                    <div class="ficha-secao-titulo">Dados Pessoais</div>
+                    <div class="ficha-campos">
+                        <div class="ficha-campo"><span class="ficha-label">Sexo:</span> <span class="ficha-valor">${fichaDados['SEXO'] || '-'}</span></div>
+                        <div class="ficha-campo-row">
+                            <div class="ficha-campo-inline"><span class="ficha-label">CPF:</span> <span class="ficha-valor">${fichaDados['CPF'] || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">RG:</span> <span class="ficha-valor">${fichaDados['RG'] || '-'}</span></div>
+                        </div>
+                        <div class="ficha-campo"><span class="ficha-label">Telefone:</span> <span class="ficha-valor">${fichaDados['TELEFONE'] || '-'}</span></div>
+                        <div class="ficha-campo-row">
+                            <div class="ficha-campo-inline"><span class="ficha-label">Cidade:</span> <span class="ficha-valor">${fichaDados['CIDADE'] || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">Estado:</span> <span class="ficha-valor">${fichaDados['ESTADO'] || '-'}</span></div>
+                        </div>
+                        <div class="ficha-campo"><span class="ficha-label">Endereço:</span> <span class="ficha-valor">${fichaDados['ENDERECO'] || '-'}</span></div>
+                        <div class="ficha-campo-row">
+                            <div class="ficha-campo-inline"><span class="ficha-label">Número:</span> <span class="ficha-valor">${fichaDados['NUMERO'] || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">Nascimento:</span> <span class="ficha-valor">${nascimentoFormatado || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">Idade:</span> <span class="ficha-valor">${fichaDados['IDADE'] || '-'}</span></div>
+                        </div>
+                        <div class="ficha-campo-row">
+                            <div class="ficha-campo-inline"><span class="ficha-label">Peso:</span> <span class="ficha-valor">${fichaDados['PESO'] || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">Altura:</span> <span class="ficha-valor">${fichaDados['ALTURA'] || '-'}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ficha-secao">
+                    <div class="ficha-secao-titulo">Contato Familiar</div>
+                    <div class="ficha-campos">
+                        <div class="ficha-campo"><span class="ficha-label">Nome do Familiar:</span> <span class="ficha-valor">${fichaDados['FAMILIAR'] || '-'}</span></div>
+                        <div class="ficha-campo-row">
+                            <div class="ficha-campo-inline"><span class="ficha-label">Telefone:</span> <span class="ficha-valor">${fichaDados['TEL_FAMILIAR'] || '-'}</span></div>
+                            <div class="ficha-campo-inline"><span class="ficha-label">Vínculo:</span> <span class="ficha-valor">${fichaDados['VINCULO'] || '-'}</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ficha-secao">
+                    <div class="ficha-secao-titulo">Sobre o Acampamento</div>
+                    <div class="ficha-campos">
+                        <div class="ficha-campo"><span class="ficha-label">Acampamentos Anteriores:</span> <span class="ficha-valor">${fichaDados['ACAMPAMENTOS'] || '-'}</span></div>
+                        <div class="ficha-campo"><span class="ficha-label">Motivo para Participar:</span> <span class="ficha-valor">${fichaDados['MOTIVO'] || '-'}</span></div>
+                    </div>
+                </div>
+
+                <div class="ficha-secao">
+                    <div class="ficha-secao-titulo">Informações de Saúde</div>
+                    <div class="ficha-saude-grid">
+                        ${gerarSaudeItem(fichaDados, 'PRESSAO', 'Pressão Alta')}
+                        ${gerarSaudeItem(fichaDados, 'DIABETES', 'Diabetes')}
+                        ${gerarSaudeItem(fichaDados, 'CORACAO', 'Probl. Cardíaco')}
+                        ${gerarSaudeItem(fichaDados, 'RESP', 'Probl. Respiratório')}
+                        ${gerarSaudeItem(fichaDados, 'ANSIEDADE', 'Ansiedade')}
+                        ${gerarSaudeItem(fichaDados, 'ALERGIA', 'Alergia')}
+                        ${gerarSaudeItem(fichaDados, 'CIRURGIA', 'Cirurgia')}
+                        ${gerarSaudeItem(fichaDados, 'RESTRICAO', 'Restrição Médica')}
+                    </div>
+                    <div class="ficha-campo" style="margin-top:8px;"><span class="ficha-label">Observações:</span> <span class="ficha-valor">${fichaDados['OBS'] || '-'}</span></div>
+                </div>
+            </div>
+        `;
     }
+
+    html += '</div>';
     document.getElementById("tabela").innerHTML = html;
+}
+
+// Função auxiliar para gerar item de saúde no card
+function gerarSaudeItem(dados, chave, label) {
+    const valor = dados[chave] || '';
+    const displayValor = (!valor || valor.trim() === '' || valor.toLowerCase() === 'não' || valor.toLowerCase() === 'nao') ? 'Não' : valor;
+    return `<div class="ficha-saude-item"><span class="ficha-saude-label">${label}:</span> <span class="ficha-saude-valor">${displayValor}</span></div>`;
 }
 
 // Lógica de Filtros Combinados
@@ -224,9 +582,11 @@ function aplicarFiltro() {
     const busca = document.getElementById("busca").value.toLowerCase().trim();
     const sexoFiltro = document.getElementById("filtroSexo").value;
     const cidadeFiltro = document.getElementById("filtroCidade").value;
+    const dataCadastroFiltro = document.getElementById("filtroDataCadastro").value;
 
     const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
     const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
+    const idxDataCadastro = headers.findIndex(h => h.trim().toLowerCase().includes("data cadastro") || h.trim().toLowerCase().includes("data_cadastro") || h.trim().toLowerCase().includes("timestamp"));
 
     const filtrado = [headers];
 
@@ -237,11 +597,21 @@ function aplicarFiltro() {
         const bateBusca = textoLinha.includes(busca);
         const bateSexo = sexoFiltro === "" || linha[idxSexo] === sexoFiltro;
         const bateCidade = cidadeFiltro === "" || linha[idxCidade] === cidadeFiltro;
+        
+        let bateDataCadastro = true;
+        if (dataCadastroFiltro !== "" && idxDataCadastro !== -1) {
+            let dataLinha = linha[idxDataCadastro] || "";
+            let dataFormatada = extrairDataFormatada(dataLinha);
+            bateDataCadastro = dataFormatada === dataCadastroFiltro;
+        }
 
-        if (bateBusca && bateSexo && bateCidade) {
+        if (bateBusca && bateSexo && bateCidade && bateDataCadastro) {
             filtrado.push(linha);
         }
     }
+    
+    // Atualizar contador com resultados filtrados
+    atualizarContador(filtrado.length - 1);
     mostrarTabela(filtrado);
 }
 
@@ -249,13 +619,107 @@ function limparFiltros() {
     document.getElementById("busca").value = "";
     document.getElementById("filtroSexo").value = "";
     document.getElementById("filtroCidade").value = "";
+    document.getElementById("filtroDataCadastro").value = "";
+    atualizarContador(todosDados.length - 1);
     mostrarTabela(todosDados);
 }
 
 function imprimir() {
-    const conteudoTabela = document.getElementById("tabela").innerHTML;
+    // Pegar dados filtrados
+    const busca = document.getElementById("busca").value.toLowerCase().trim();
+    const sexoFiltro = document.getElementById("filtroSexo").value;
+    const cidadeFiltro = document.getElementById("filtroCidade").value;
+    const dataCadastroFiltro = document.getElementById("filtroDataCadastro").value;
+
+    const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
+    const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
+    const idxDataCadastro = headers.findIndex(h => h.trim().toLowerCase().includes("data cadastro") || h.trim().toLowerCase().includes("data_cadastro") || h.trim().toLowerCase().includes("timestamp"));
+
+    const dadosParaImprimir = [];
+
+    for (let i = 1; i < todosDados.length; i++) {
+        const linha = todosDados[i];
+        const textoLinha = linha.join(" ").toLowerCase();
+        
+        const bateBusca = textoLinha.includes(busca);
+        const bateSexo = sexoFiltro === "" || linha[idxSexo] === sexoFiltro;
+        const bateCidade = cidadeFiltro === "" || linha[idxCidade] === cidadeFiltro;
+        
+        let bateDataCadastro = true;
+        if (dataCadastroFiltro !== "" && idxDataCadastro !== -1) {
+            let dataLinha = linha[idxDataCadastro] || "";
+            let dataFormatada = extrairDataFormatada(dataLinha);
+            bateDataCadastro = dataFormatada === dataCadastroFiltro;
+        }
+
+        if (bateBusca && bateSexo && bateCidade && bateDataCadastro) {
+            dadosParaImprimir.push(linha);
+        }
+    }
+
+    if (dadosParaImprimir.length === 0) {
+        alert("Nenhum registro encontrado para imprimir.");
+        return;
+    }
+
     const dataAtual = new Date().toLocaleDateString('pt-BR');
-    const win = window.open('', '', 'width=1400,height=900,scrollbars=yes');
+    
+    // Gerar HTML de mini-fichas
+    let miniFichasHTML = '';
+    dadosParaImprimir.forEach((dados, index) => {
+        const fichaDados = {};
+        headers.forEach((header, idx) => {
+            fichaDados[header] = dados[idx] || '';
+        });
+        
+        miniFichasHTML += `
+            <div class="mini-ficha">
+                <div class="mini-ficha-header">
+                    <strong>${fichaDados['NOME'] || 'Sem Nome'}</strong>
+                </div>
+                <div class="mini-ficha-body">
+                    <div class="mini-campo"><span>Sexo:</span> ${fichaDados['SEXO'] || '-'}</div>
+                    <div class="mini-campo-row">
+                        <span>CPF: ${fichaDados['CPF'] || '-'}</span>
+                        <span>RG: ${fichaDados['RG'] || '-'}</span>
+                    </div>
+                    <div class="mini-campo"><span>Tel:</span> ${fichaDados['TELEFONE'] || '-'}</div>
+                    <div class="mini-campo-row">
+                        <span>${fichaDados['CIDADE'] || '-'}, ${fichaDados['ESTADO'] || '-'}</span>
+                    </div>
+                    <div class="mini-campo"><span>End:</span> ${fichaDados['ENDERECO'] || '-'}, ${fichaDados['NUMERO'] || '-'}</div>
+                    <div class="mini-campo-row">
+                        <span>Nasc: ${formatarData(fichaDados['NASCIMENTO']) || '-'}</span>
+                        <span>Idade: ${fichaDados['IDADE'] || '-'}</span>
+                    </div>
+                    <div class="mini-campo-row">
+                        <span>Peso: ${fichaDados['PESO'] || '-'}</span>
+                        <span>Alt: ${fichaDados['ALTURA'] || '-'}</span>
+                    </div>
+                    <div class="mini-secao">Contato Familiar</div>
+                    <div class="mini-campo"><span>${fichaDados['FAMILIAR'] || '-'}</span></div>
+                    <div class="mini-campo-row">
+                        <span>Tel: ${fichaDados['TEL_FAMILIAR'] || '-'}</span>
+                        <span>Vínc: ${fichaDados['VINCULO'] || '-'}</span>
+                    </div>
+                    <div class="mini-secao">Saúde</div>
+                    <div class="mini-saude-grid">
+                        <span>Pressão: ${fichaDados['PRESSAO'] || 'Não'}</span>
+                        <span>Diabetes: ${fichaDados['DIABETES'] || 'Não'}</span>
+                        <span>Coração: ${fichaDados['CORACAO'] || 'Não'}</span>
+                        <span>Resp: ${fichaDados['RESP'] || 'Não'}</span>
+                        <span>Ansiedade: ${fichaDados['ANSIEDADE'] || 'Não'}</span>
+                        <span>Alergia: ${fichaDados['ALERGIA'] || 'Não'}</span>
+                        <span>Cirurgia: ${fichaDados['CIRURGIA'] || 'Não'}</span>
+                        <span>Restrição: ${fichaDados['RESTRICAO'] || 'Não'}</span>
+                    </div>
+                    <div class="mini-campo" style="margin-top:2px;"><span>Obs:</span> ${fichaDados['OBS'] || '-'}</div>
+                </div>
+            </div>
+        `;
+    });
+
+    const win = window.open('', '');
     win.document.write(`
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -264,8 +728,8 @@ function imprimir() {
             <title>Relatório de Inscrições - 1º Acampamento de Servos</title>
             <style>
                 @page {
-                    size: A4 landscape;
-                    margin: 15mm;
+                    size: A4 portrait;
+                    margin: 8mm;
                 }
                 
                 * {
@@ -276,147 +740,147 @@ function imprimir() {
                 
                 body {
                     font-family: 'Segoe UI', Arial, sans-serif;
-                    background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%);
-                    color: #e2e8f0;
-                    padding: 30px;
-                    min-height: 100vh;
+                    background: #ffffff;
+                    color: #1a1a1a;
+                    font-size: 8pt;
+                    line-height: 1.2;
                 }
                 
                 .cabecalho {
                     text-align: center;
-                    margin-bottom: 40px;
-                    padding: 30px 0;
-                    border-bottom: 3px solid #facc15;
+                    margin-bottom: 8px;
+                    padding: 8px 4px;
+                    border: 1.5px solid #2563eb;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
                 }
                 
                 .cabecalho h1 {
-                    color: #facc15;
-                    font-size: 2.8em;
-                    margin-bottom: 15px;
-                    text-shadow: 0 4px 15px rgba(250, 204, 21, 0.3);
+                    color: #2563eb;
+                    font-size: 12pt;
+                    margin-bottom: 2px;
+                    font-weight: 700;
                 }
                 
                 .cabecalho .subtitulo {
-                    color: #94a3b8;
-                    font-size: 1.4em;
-                    margin-bottom: 10px;
+                    color: #475569;
+                    font-size: 9pt;
+                    margin-bottom: 1px;
+                    font-weight: 600;
                 }
                 
                 .cabecalho .data {
                     color: #64748b;
-                    font-size: 1.1em;
+                    font-size: 7pt;
                 }
                 
-                .tabela-container {
-                    background: #1e2937;
-                    border-radius: 16px;
-                    padding: 25px;
-                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-                    border: 1px solid #334155;
-                    overflow-x: auto;
+                .relatorio-container {
+                    display: grid;
+                    grid-template-columns: 1fr;
+                    gap: 6px;
                 }
                 
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    font-size: 13px;
+                .mini-ficha {
+                    border: 1.5px solid #2563eb;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    background: #ffffff;
+                    page-break-inside: avoid;
                 }
                 
-                th {
-                    background: #2a2a2a;
-                    color: #facc15;
-                    padding: 15px 12px;
-                    text-align: left;
+                .mini-ficha-header {
+                    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+                    color: white;
+                    padding: 3px 6px;
+                    font-size: 9pt;
                     font-weight: bold;
-                    font-size: 14px;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    border: 1px solid #334155;
                 }
                 
-                td {
-                    padding: 12px 10px;
-                    border: 1px solid #334155;
-                    vertical-align: middle;
+                .mini-ficha-body {
+                    padding: 4px 6px;
+                    font-size: 7.5pt;
                 }
                 
-                tr:nth-child(even) {
-                    background: #222;
+                .mini-campo {
+                    margin-bottom: 1px;
                 }
                 
-                tr:hover {
-                    background: #333;
+                .mini-campo span {
+                    font-weight: bold;
+                    color: #374151;
+                }
+                
+                .mini-campo-row {
+                    display: flex;
+                    gap: 15px;
+                    margin-bottom: 1px;
+                }
+                
+                .mini-secao {
+                    font-weight: bold;
+                    color: #2563eb;
+                    font-size: 7pt;
+                    margin-top: 3px;
+                    margin-bottom: 1px;
+                    padding-top: 2px;
+                    border-top: 1px solid #e2e8f0;
+                }
+                
+                .mini-saude-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 2px;
+                    font-size: 6.5pt;
+                }
+                
+                .mini-saude-grid span {
+                    font-weight: normal;
                 }
                 
                 .rodape {
                     text-align: center;
-                    margin-top: 40px;
-                    padding: 20px;
+                    margin-top: 8px;
+                    padding: 4px;
                     color: #64748b;
-                    font-size: 0.9em;
-                    border-top: 1px solid #334155;
+                    font-size: 7pt;
+                    border-top: 1px solid #e2e8f0;
+                    background: #f8fafc;
+                    border-radius: 4px;
                 }
                 
                 @media print {
                     body {
-                        background: white;
-                        color: black;
-                        padding: 20px;
+                        margin: 0;
+                        padding: 0;
                     }
                     
-                    .cabecalho h1 {
-                        color: #2563eb;
-                        text-shadow: none;
+                    .mini-ficha {
+                        page-break-inside: avoid;
                     }
                     
-                    .cabecalho .subtitulo {
-                        color: #374151;
+                    .relatorio-container {
+                        display: block;
                     }
                     
-                    .tabela-container {
-                        background: white;
-                        box-shadow: none;
-                        border: 1px solid #ccc;
-                    }
-                    
-                    th {
-                        background: #f3f4f6;
-                        color: #111827;
-                        border: 1px solid #ccc;
-                    }
-                    
-                    td {
-                        border: 1px solid #ccc;
-                    }
-                    
-                    tr:nth-child(even) {
-                        background: #f9fafb;
-                    }
-                    
-                    tr:hover {
-                        background: #f3f4f6;
-                    }
-                    
-                    .rodape {
-                        display: none;
+                    .mini-ficha {
+                        margin-bottom: 6px;
                     }
                 }
             </style>
         </head>
         <body>
             <div class="cabecalho">
-                <h1> 1º Acampamento de Servos</h1>
-                <div class="subtitulo">Relatório de Inscrições</div>
-                <div class="data">Gerado em: ${dataAtual}</div>
+                <h1>1º ACAMPAMENTO DE SERVOS</h1>
+                <div class="subtitulo">RELATÓRIO DE INSCRIÇÕES</div>
+                <div class="data">Emitido em: ${dataAtual} • Total: ${dadosParaImprimir.length} inscritos</div>
             </div>
             
-            <div class="tabela-container">
-                <table>${conteudoTabela}</table>
+            <div class="relatorio-container">
+                ${miniFichasHTML}
             </div>
             
             <div class="rodape">
-                <p>Relatório gerado automaticamente pelo Sistema de Cadastros</p>
-                <p>Que Deus abençoe grandemente a vida de cada participante </p>
+                <p>Sistema de Cadastros - 1º Acampamento de Servos</p>
             </div>
         </body>
         </html>
@@ -424,8 +888,709 @@ function imprimir() {
     win.document.close();
 }
 
+// Função para imprimir ficha individual
+function imprimirFicha(linhaIndex) {
+    const dados = todosDados[linhaIndex];
+    if (!dados || dados.length === 0) {
+        alert("Dados não encontrados para esta ficha.");
+        return;
+    }
+
+    const dataAtual = new Date().toLocaleDateString('pt-BR');
+    
+    // Criar objeto com os dados formatados
+    const fichaDados = {};
+    headers.forEach((header, index) => {
+        fichaDados[header] = dados[index] || '';
+    });
+
+    const win = window.open('', '');
+    win.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Ficha Individual - 1º Acampamento de Servos</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 8mm;
+                }
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                    background: #ffffff;
+                    color: #1a1a1a;
+                    font-size: 9pt;
+                    line-height: 1.2;
+                }
+                
+                .cabecalho {
+                    text-align: center;
+                    margin-bottom: 6px;
+                    padding: 6px 4px;
+                    border: 1.5px solid #2563eb;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                }
+                
+                .cabecalho h1 {
+                    color: #2563eb;
+                    font-size: 14pt;
+                    margin-bottom: 2px;
+                    font-weight: 700;
+                }
+                
+                .cabecalho .subtitulo {
+                    color: #475569;
+                    font-size: 10pt;
+                    margin-bottom: 1px;
+                    font-weight: 600;
+                }
+                
+                .cabecalho .data {
+                    color: #64748b;
+                    font-size: 12px;
+                }
+                
+                .ficha-container {
+                    border: 1.5px solid #e2e8f0;
+                    border-radius: 6px;
+                    padding: 6px;
+                    background: #ffffff;
+                }
+                
+                .secao {
+                    padding: 4px 5px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 4px;
+                    background: #f8fafc;
+                    margin-bottom: 4px;
+                }
+                
+                .secao-titulo {
+                    font-size: 9pt;
+                    font-weight: bold;
+                    color: #2563eb;
+                    margin-bottom: 3px;
+                    padding-bottom: 2px;
+                    border-bottom: 1.5px solid #2563eb;
+                }
+                
+                .campo {
+                    margin-bottom: 1px;
+                    display: flex;
+                    align-items: baseline;
+                    font-size: 8pt;
+                }
+                
+                .campo-label {
+                    font-weight: bold;
+                    color: #374151;
+                    min-width: 85px;
+                    margin-right: 4px;
+                    font-size: 8pt;
+                }
+                
+                .campo-valor {
+                    color: #1f2937;
+                    flex: 1;
+                    font-size: 8pt;
+                }
+                
+                .campo-vazio {
+                    color: #9ca3af;
+                    font-style: italic;
+                }
+                
+                .saude-item {
+                    padding: 2px 4px;
+                    background: #ffffff;
+                    border-radius: 3px;
+                    border-left: 2px solid #2563eb;
+                    font-size: 7.5pt;
+                    margin-bottom: 2px;
+                }
+                
+                .rodape {
+                    text-align: center;
+                    margin-top: 4px;
+                    padding: 3px;
+                    color: #64748b;
+                    font-size: 7pt;
+                    border-top: 1px solid #e2e8f0;
+                    background: #f8fafc;
+                    border-radius: 4px;
+                }
+                
+                @media print {
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    
+                    .cabecalho {
+                        margin-bottom: 6px;
+                        padding: 6px 4px;
+                    }
+                    
+                    .cabecalho h1 {
+                        font-size: 14pt;
+                    }
+                    
+                    .cabecalho .subtitulo {
+                        font-size: 10pt;
+                    }
+                    
+                    .secao {
+                        margin-bottom: 4px;
+                        padding: 4px 5px;
+                    }
+                    
+                    .secao-titulo {
+                        font-size: 9pt;
+                    }
+                    
+                    .campo-label {
+                        min-width: 85px;
+                        font-size: 8pt;
+                    }
+                    
+                    .campo-valor {
+                        font-size: 8pt;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="ficha-pagina">
+                <div class="cabecalho">
+                    <h1>1º ACAMPAMENTO DE SERVOS</h1>
+                    <div class="subtitulo">FICHA INDIVIDUAL DO CAMPISTA</div>
+                    <div class="data">Emitido em: ${dataAtual}</div>
+                </div>
+                
+                <div class="ficha-container">
+                    <div class="secao">
+                        <div class="secao-titulo">Dados Pessoais</div>
+                        ${gerarCampoFicha(fichaDados, 'NOME', 'Nome Completo')}
+                        ${gerarCampoFicha(fichaDados, 'SEXO', 'Sexo')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'CPF', 'CPF')}
+                            ${gerarCampoFichaInline(fichaDados, 'RG', 'RG')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'TELEFONE', 'Telefone')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'CIDADE', 'Cidade')}
+                            ${gerarCampoFichaInline(fichaDados, 'ESTADO', 'Estado')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'ENDERECO', 'Endereço')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'NUMERO', 'Número')}
+                            ${gerarCampoFichaInlineData(fichaDados, 'NASCIMENTO', 'Nascimento', 'nascimento')}
+                            ${gerarCampoFichaInline(fichaDados, 'IDADE', 'Idade')}
+                        </div>
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'PESO', 'Peso')}
+                            ${gerarCampoFichaInline(fichaDados, 'ALTURA', 'Altura')}
+                        </div>
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Contato Familiar</div>
+                        ${gerarCampoFicha(fichaDados, 'FAMILIAR', 'Nome do Familiar')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'TEL_FAMILIAR', 'Telefone')}
+                            ${gerarCampoFichaInline(fichaDados, 'VINCULO', 'Vínculo')}
+                        </div>
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Sobre o Acampamento</div>
+                        ${gerarCampoFicha(fichaDados, 'ACAMPAMENTOS', 'Acampamentos Anteriores')}
+                        ${gerarCampoFicha(fichaDados, 'MOTIVO', 'Motivo para Participar')}
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Informações de Saúde</div>
+                        <div class="saude-grid">
+                            ${gerarCampoSaudeFicha(fichaDados, 'PRESSAO', 'Pressão Alta')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'DIABETES', 'Diabetes')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'CORACAO', 'Probl. Cardíaco')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'RESP', 'Probl. Respiratório')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'ANSIEDADE', 'Ansiedade')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'ALERGIA', 'Alergia')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'CIRURGIA', 'Cirurgia')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'RESTRICAO', 'Restrição Médica')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'OBS', 'Observações')}
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Termo de Responsabilidade</div>
+                        ${gerarCampoFicha(fichaDados, 'ACEITE', 'Aceite dos Termos')}
+                    </div>
+                </div>
+                
+                <div class="rodape">
+                    <p>Sistema de Cadastros - 1º Acampamento de Servos</p>
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+    
+    win.document.close();
+}
+
+// Função auxiliar para gerar campos da ficha
+function gerarCampo(dados, chave, label) {
+    const valor = dados[chave] || '';
+    return `
+        <div class="campo">
+            <div class="campo-label">${label}:</div>
+            <div class="campo-valor">${valor || '<span class="campo-vazio">Não informado</span>'}</div>
+        </div>
+    `;
+}
+
+// Função auxiliar para gerar campos de saúde
+function gerarCampoSaude(dados, chave, label) {
+    const valor = dados[chave] || '';
+    if (!valor) return '';
+    
+    return `
+        <div class="saude-item">
+            <strong>${label}:</strong> ${valor}
+        </div>
+    `;
+}
+
+// Função para imprimir todas as fichas (quando clicado no botão FICHA principal)
+function imprimirTodasFichas() {
+    const busca = document.getElementById("busca").value.toLowerCase().trim();
+    const sexoFiltro = document.getElementById("filtroSexo").value;
+    const cidadeFiltro = document.getElementById("filtroCidade").value;
+    const dataCadastroFiltro = document.getElementById("filtroDataCadastro").value;
+
+    const idxSexo = headers.findIndex(h => h.trim().toLowerCase() === "sexo");
+    const idxCidade = headers.findIndex(h => h.trim().toLowerCase().includes("cidade"));
+    const idxDataCadastro = headers.findIndex(h => h.trim().toLowerCase().includes("data cadastro") || h.trim().toLowerCase().includes("data_cadastro") || h.trim().toLowerCase().includes("timestamp"));
+
+    const dadosParaImprimir = [];
+
+    for (let i = 1; i < todosDados.length; i++) {
+        const linha = todosDados[i];
+        const textoLinha = linha.join(" ").toLowerCase();
+        
+        const bateBusca = textoLinha.includes(busca);
+        const bateSexo = sexoFiltro === "" || linha[idxSexo] === sexoFiltro;
+        const bateCidade = cidadeFiltro === "" || linha[idxCidade] === cidadeFiltro;
+        
+        let bateDataCadastro = true;
+        if (dataCadastroFiltro !== "" && idxDataCadastro !== -1) {
+            let dataLinha = linha[idxDataCadastro] || "";
+            let dataFormatada = extrairDataFormatada(dataLinha);
+            bateDataCadastro = dataFormatada === dataCadastroFiltro;
+        }
+
+        if (bateBusca && bateSexo && bateCidade && bateDataCadastro) {
+            dadosParaImprimir.push(linha);
+        }
+    }
+
+    if (dadosParaImprimir.length === 0) {
+        alert("Nenhum registro encontrado para imprimir.");
+        return;
+    }
+
+    if (dadosParaImprimir.length > 10) {
+        if (!confirm(`Serão impressas ${dadosParaImprimir.length} fichas individuais. Deseja continuar?`)) {
+            return;
+        }
+    }
+
+    const dataAtual = new Date().toLocaleDateString('pt-BR');
+    
+    // Gerar HTML de todas as fichas
+    let fichasHTML = '';
+    dadosParaImprimir.forEach((dados, index) => {
+        const fichaDados = {};
+        headers.forEach((header, idx) => {
+            fichaDados[header] = dados[idx] || '';
+        });
+        
+        const isLast = index === dadosParaImprimir.length - 1;
+        
+        fichasHTML += `
+            <div class="ficha-pagina ${isLast ? 'last' : ''}">
+                <div class="cabecalho-ficha">
+                    <h1>1º ACAMPAMENTO DE SERVOS</h1>
+                    <div class="subtitulo">FICHA INDIVIDUAL DO CAMPISTA</div>
+                    <div class="data">Emitido em: ${dataAtual}</div>
+                </div>
+                
+                <div class="ficha-container">
+                    <div class="secao">
+                        <div class="secao-titulo">Dados Pessoais</div>
+                        ${gerarCampoFicha(fichaDados, 'NOME', 'Nome Completo')}
+                        ${gerarCampoFicha(fichaDados, 'SEXO', 'Sexo')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'CPF', 'CPF')}
+                            ${gerarCampoFichaInline(fichaDados, 'RG', 'RG')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'TELEFONE', 'Telefone')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'CIDADE', 'Cidade')}
+                            ${gerarCampoFichaInline(fichaDados, 'ESTADO', 'Estado')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'ENDERECO', 'Endereço')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'NUMERO', 'Número')}
+                            ${gerarCampoFichaInlineData(fichaDados, 'NASCIMENTO', 'Nascimento', 'nascimento')}
+                            ${gerarCampoFichaInline(fichaDados, 'IDADE', 'Idade')}
+                        </div>
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'PESO', 'Peso')}
+                            ${gerarCampoFichaInline(fichaDados, 'ALTURA', 'Altura')}
+                        </div>
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Contato Familiar</div>
+                        ${gerarCampoFicha(fichaDados, 'FAMILIAR', 'Nome do Familiar')}
+                        <div class="campo-row">
+                            ${gerarCampoFichaInline(fichaDados, 'TEL_FAMILIAR', 'Telefone')}
+                            ${gerarCampoFichaInline(fichaDados, 'VINCULO', 'Vínculo')}
+                        </div>
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Sobre o Acampamento</div>
+                        ${gerarCampoFicha(fichaDados, 'ACAMPAMENTOS', 'Acampamentos Anteriores')}
+                        ${gerarCampoFicha(fichaDados, 'MOTIVO', 'Motivo para Participar')}
+                    </div>
+                    
+                    <div class="secao">
+                        <div class="secao-titulo">Informações de Saúde</div>
+                        <div class="saude-grid">
+                            ${gerarCampoSaudeFicha(fichaDados, 'PRESSAO', 'Pressão Alta')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'DIABETES', 'Diabetes')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'CORACAO', 'Probl. Cardíaco')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'RESP', 'Probl. Respiratório')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'ANSIEDADE', 'Ansiedade')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'ALERGIA', 'Alergia')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'CIRURGIA', 'Cirurgia')}
+                            ${gerarCampoSaudeFicha(fichaDados, 'RESTRICAO', 'Restrição Médica')}
+                        </div>
+                        ${gerarCampoFicha(fichaDados, 'OBS', 'Observações')}
+                    </div>
+                    
+                    <div class="secao termo">
+                        <div class="secao-titulo">Termo de Responsabilidade</div>
+                        ${gerarCampoFicha(fichaDados, 'ACEITE', 'Aceite dos Termos')}
+                    </div>
+                </div>
+                
+                <div class="rodape-ficha">
+                    <p>Sistema de Cadastros - 1º Acampamento de Servos</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    const win = window.open('', '');
+    win.document.write(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Fichas Individuais - 1º Acampamento de Servos</title>
+            <style>
+                @page {
+                    size: A4 portrait;
+                    margin: 8mm;
+                }
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    font-family: 'Segoe UI', Arial, sans-serif;
+                    background: #ffffff;
+                    color: #1a1a1a;
+                    font-size: 9pt;
+                    line-height: 1.2;
+                }
+                
+                .ficha-pagina {
+                    width: 210mm;
+                    min-height: 277mm;
+                    max-height: 277mm;
+                    padding: 8mm;
+                    page-break-after: always;
+                    page-break-inside: avoid;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+                
+                .ficha-pagina.last {
+                    page-break-after: avoid;
+                }
+                
+                .cabecalho-ficha {
+                    text-align: center;
+                    margin-bottom: 6px;
+                    padding: 6px 4px;
+                    border: 1.5px solid #2563eb;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+                    flex-shrink: 0;
+                }
+                
+                .cabecalho-ficha h1 {
+                    color: #2563eb;
+                    font-size: 14pt;
+                    margin-bottom: 2px;
+                    font-weight: 700;
+                }
+                
+                .cabecalho-ficha .subtitulo {
+                    color: #475569;
+                    font-size: 10pt;
+                    margin-bottom: 1px;
+                    font-weight: 600;
+                }
+                
+                .cabecalho-ficha .data {
+                    color: #64748b;
+                    font-size: 7pt;
+                }
+                
+                .ficha-container {
+                    border: 1.5px solid #e2e8f0;
+                    border-radius: 6px;
+                    padding: 6px;
+                    background: #ffffff;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    overflow: hidden;
+                }
+                
+                .secao {
+                    padding: 4px 5px;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 4px;
+                    background: #f8fafc;
+                    flex-shrink: 0;
+                }
+                
+                .secao.termo {
+                    margin-top: auto;
+                }
+                
+                .secao-titulo {
+                    font-size: 9pt;
+                    font-weight: bold;
+                    color: #2563eb;
+                    margin-bottom: 3px;
+                    padding-bottom: 2px;
+                    border-bottom: 1.5px solid #2563eb;
+                }
+                
+                .campo {
+                    margin-bottom: 1px;
+                    display: flex;
+                    align-items: baseline;
+                    font-size: 8pt;
+                }
+                
+                .campo-row {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 1px;
+                }
+                
+                .campo-inline {
+                    display: flex;
+                    align-items: baseline;
+                    font-size: 8pt;
+                    flex: 1;
+                }
+                
+                .campo-inline.nascimento {
+                    margin-left: 25%;
+                }
+                
+                .campo-label {
+                    font-weight: bold;
+                    color: #374151;
+                    min-width: 100px;
+                    margin-right: 4px;
+                    font-size: 8pt;
+                }
+                
+                .campo-inline .campo-label {
+                    min-width: auto;
+                    white-space: nowrap;
+                }
+                
+                .campo-valor {
+                    color: #1f2937;
+                    flex: 1;
+                    font-size: 8pt;
+                }
+                
+                .campo-vazio {
+                    color: #9ca3af;
+                    font-style: italic;
+                }
+                
+                .saude-grid {
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 3px;
+                    margin-bottom: 3px;
+                }
+                
+                .saude-item {
+                    padding: 2px 4px;
+                    background: #ffffff;
+                    border-radius: 3px;
+                    border-left: 2px solid #2563eb;
+                    font-size: 7.5pt;
+                }
+                
+                .saude-item strong {
+                    color: #2563eb;
+                }
+                
+                .rodape-ficha {
+                    text-align: center;
+                    margin-top: 4px;
+                    padding: 3px;
+                    color: #64748b;
+                    font-size: 7pt;
+                    border-top: 1px solid #e2e8f0;
+                    background: #f8fafc;
+                    border-radius: 4px;
+                    flex-shrink: 0;
+                }
+                
+                @media print {
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    
+                    .ficha-pagina {
+                        width: 100%;
+                        min-height: auto;
+                        max-height: none;
+                        height: 277mm;
+                        padding: 6mm;
+                        page-break-after: always;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .ficha-pagina.last {
+                        page-break-after: avoid;
+                    }
+                    
+                    .secao {
+                        page-break-inside: avoid;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            ${fichasHTML}
+        </body>
+        </html>
+    `);
+    
+    win.document.close();
+}
+
+// Função auxiliar para formatar data
+function formatarData(dataStr) {
+    if (!dataStr || dataStr.trim() === '') return '';
+    try {
+        const data = new Date(dataStr);
+        if (!isNaN(data)) {
+            const dia = String(data.getDate()).padStart(2, '0');
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const ano = data.getFullYear();
+            return `${dia}/${mes}/${ano}`;
+        }
+    } catch (e) {
+        // Mantém original se der erro
+    }
+    return dataStr;
+}
+
+// Função auxiliar para gerar campos da ficha (versão impressão)
+function gerarCampoFicha(dados, chave, label) {
+    let valor = dados[chave] || '';
+    return `
+        <div class="campo">
+            <div class="campo-label">${label}:</div>
+            <div class="campo-valor">${valor || '<span class="campo-vazio">-</span>'}</div>
+        </div>
+    `;
+}
+
+// Função auxiliar para gerar campos em linha (para economizar espaço)
+function gerarCampoFichaInline(dados, chave, label) {
+    let valor = dados[chave] || '';
+    return `
+        <div class="campo-inline">
+            <div class="campo-label">${label}:</div>
+            <div class="campo-valor">${valor || '<span class="campo-vazio">-</span>'}</div>
+        </div>
+    `;
+}
+
+// Função auxiliar para gerar campos de data em linha (com formatação)
+function gerarCampoFichaInlineData(dados, chave, label, classeExtra = '') {
+    let valor = formatarData(dados[chave] || '');
+    const classe = classeExtra ? `campo-inline ${classeExtra}` : 'campo-inline';
+    return `
+        <div class="${classe}">
+            <div class="campo-label">${label}:</div>
+            <div class="campo-valor">${valor || '<span class="campo-vazio">-</span>'}</div>
+        </div>
+    `;
+}
+
+// Função auxiliar para gerar campos de saúda da ficha
+function gerarCampoSaudeFicha(dados, chave, label) {
+    const valor = dados[chave] || '';
+    if (!valor || valor.trim() === '' || valor.toLowerCase() === 'não' || valor.toLowerCase() === 'nao') {
+        return `<div class="saude-item"><strong>${label}:</strong> Não</div>`;
+    }
+    return `<div class="saude-item"><strong>${label}:</strong> ${valor}</div>`;
+}
+
 // Evento de busca em tempo real
 document.getElementById("busca").addEventListener("input", aplicarFiltro);
+
+// Iniciar verificação automática de novas colunas a cada 30 segundos
+setInterval(() => {
+    verificarNovasColunas();
+}, 30000); // 30 segundos
 
 </script>
 </body>
